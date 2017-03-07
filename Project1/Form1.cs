@@ -25,7 +25,7 @@ namespace Project1
         int customerBlockSize = 8;
         int depositorBlockSize = 15;
 
-        public string[] outBuffer = new string[5]; //
+        public string[] outBuffer = new string[5]; // Out buffer
 
 
         public void getStatistics(string file) {
