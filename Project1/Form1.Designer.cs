@@ -43,6 +43,8 @@
             this.label7 = new System.Windows.Forms.Label();
             this.cmbCurrServer = new System.Windows.Forms.ComboBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.btnClear = new System.Windows.Forms.Button();
+            this.txtLog = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -177,11 +179,33 @@
             this.dataGridView1.Size = new System.Drawing.Size(623, 150);
             this.dataGridView1.TabIndex = 8;
             // 
+            // btnClear
+            // 
+            this.btnClear.Location = new System.Drawing.Point(429, 359);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(108, 23);
+            this.btnClear.TabIndex = 9;
+            this.btnClear.Text = "clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // txtLog
+            // 
+            this.txtLog.Location = new System.Drawing.Point(700, 91);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ReadOnly = true;
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtLog.Size = new System.Drawing.Size(340, 414);
+            this.txtLog.TabIndex = 10;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(848, 568);
+            this.ClientSize = new System.Drawing.Size(1052, 568);
+            this.Controls.Add(this.txtLog);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.cmbCurrServer);
             this.Controls.Add(this.txtWhere);
@@ -222,6 +246,8 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cmbCurrServer;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.TextBox txtLog;
     }
 }
 
