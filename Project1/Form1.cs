@@ -231,25 +231,34 @@ namespace Project1
 
         public void semiJoin(RelationInfo table1, RelationInfo table2) {
 
-            //MessageBox.Show("Site ="+table1.site +"   Current  ="+cmbCurrServer.Text);
-            //MessageBox.Show("Site =" + table2.site + "   Current  =" + cmbCurrServer.Text);
             string shippingFileName = "";
-
+            string returndFileName = "";
             if (table1.site.Equals(cmbCurrServer.Text))
             {
                 shippingFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
-                MessageBox.Show(table1.table);
-                if (table2.table.Equals("customer"))
+                returndFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
+
+                try
+                {
+                    System.IO.File.Delete(shippingFileName);
+                    System.IO.File.Delete(returndFileName);
+                }
+                catch (System.IO.IOException eee)
+                {}
+
+
+                if (table1.table.Equals("customer"))
                 {
                     txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
+                    txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
                     txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                    List<string> tempsiteL1 = new List<string>();
 
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
                     {
                         foreach (Customer i in customerTable) {
                             file.WriteLine(i.getCustName());
-                            lstOuter.Items.Add(i.getCustName());
+                            lstSite1.Items.Add(i.getCustName());
                         }
                     }
 
@@ -258,70 +267,94 @@ namespace Project1
                         using (StreamReader sr = new StreamReader(shippingFileName))
                         {
                             string line;
-                            List<string> tempSite2 = new List<string>();
+                            List<string> tempSite1 = new List<string>();
 
-                            
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                foreach (Customer i in customerTable)
-                                {
-
-                                    if (line.Equals(i.getCustName()))
-                                    {
-                                        tempSite2.Add(line);
-                                        lstInner.Items.Add(line);
-                                    }
-                                }
-                            }
-                            MessageBox.Show("" + tempSite2.Count);
-                            
-                        }
-                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
-                    }
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-                }
-                if (table2.table.Equals("depositor"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Depositor i in depositorTable)
-                        {
-                            file.WriteLine(i.getKey1());
-                            lstOuter.Items.Add(i.getKey1());
-                        }
-                    }
-
-                    try
-                    {
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-                            List<string> tempSite2 = new List<string>();
-                                                        
                             while ((line = sr.ReadLine()) != null)
                             {
                                 foreach (Depositor i in depositorTable)
                                 {
                                     if (line.Equals(i.getKey1()))
                                     {
-                                        tempSite2.Add(line);
-                                        lstInner.Items.Add(line);
+                                        tempSite1.Add(line);
+                                        break;
                                     }
                                 }
                             }
-                            MessageBox.Show("" + tempSite2.Count);
-                            
+                            tempsiteL1 = tempSite1.ToList<string>();
+                            lstSite2.DataSource = tempsiteL1;
+
                         }
-                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                        {
+                            foreach (string i in tempsiteL1)
+                            {
+                                file.WriteLine(i);
+                            }
+                        }
+
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+
+                    }
+                    catch (Exception eee)
+                    {
+                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                    }
+                }
+                if (table1.table.Equals("depositor"))
+                {
+                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                    txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
+                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                    List<string> tempsiteL1 = new List<string>();
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                    {
+                        foreach (Depositor i in depositorTable)
+                        {
+                            file.WriteLine(i.getKey1());
+                            lstSite1.Items.Add(i.getKey1());
+                        }
+                    }
+
+                    try
+                    {
+                        using (StreamReader sr = new StreamReader(shippingFileName))
+                        {
+                            string line;
+                            HashSet<string> tempSite2 = new HashSet<string>();
+
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                foreach (Customer i in customerTable)
+                                {
+                                    if (line.Equals(i.getCustName()))
+                                    {
+                                        tempSite2.Add(line);
+                                        break;
+                                    }
+                                }
+                            }
+                            tempsiteL1 = tempSite2.ToList<string>();
+                            lstSite2.DataSource = tempsiteL1;
+
+                        }
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                        {
+                            foreach (Customer i in customerTable)
+                            {
+                                file.WriteLine(i.getCustName());
+                            }
+                        }
+
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+
                     }
                     catch (Exception eee)
                     {
@@ -346,28 +379,30 @@ namespace Project1
             else if (table2.site.Equals(cmbCurrServer.Text))
             {
                 shippingFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
-
+                returndFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
                 try
                 {
                     System.IO.File.Delete(shippingFileName);
+                    System.IO.File.Delete(returndFileName);
                 }
                 catch (System.IO.IOException eee)
                 {
                     MessageBox.Show("File not found depositor  \n\n" + eee.ToString());
                 }
 
-                if (table1.table.Equals("customer"))
+                if (table2.table.Equals("customer"))
                 {
                     txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
+                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
                     txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                    List<string> tempsiteL1 = new List<string>();
 
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
                     {
                         foreach (Customer i in customerTable)
                         {
                             file.WriteLine(i.getCustName());
-                            lstOuter.Items.Add(i.getCustName());
+                            lstSite1.Items.Add(i.getCustName());
                         }
                     }
 
@@ -376,45 +411,61 @@ namespace Project1
                         using (StreamReader sr = new StreamReader(shippingFileName))
                         {
                             string line;
-                            List<string> tempSite2 = new List<string>();
+                            HashSet<string> tempSite1 = new HashSet<string>();
 
-                            
+
                             while ((line = sr.ReadLine()) != null)
                             {
-                                foreach (Customer i in customerTable)
+                                foreach (Depositor i in depositorTable)
                                 {
-                                    if (line.Equals(i.getCustName()))
+                                    if (line.Equals(i.getKey1()))
                                     {
-                                        tempSite2.Add(line);
-                                        lstInner.Items.Add(line);
+                                        tempSite1.Add(line);
+                                        break;
                                     }
                                 }
                             }
-                            MessageBox.Show("" + lstInner.Items.Count);
-                            
+                            tempsiteL1 = tempSite1.ToList<string>();
+                            lstSite2.DataSource = tempsiteL1;
+
                         }
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                        {
+                            foreach (string i in tempsiteL1)
+                            {
+                                file.WriteLine(i);
+                            }
+                        }
+
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+
                     }
+
                     catch (Exception eee)
                     {
                         MessageBox.Show("File not found customer  \n\n" + eee.ToString());
                     }
 
                 }
-                if (table1.table.Equals("depositor"))
+                if (table2.table.Equals("depositor"))
                 {
+                    MessageBox.Show("starting depos site 2");
                     txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + " Ship " + table1.table + " key to site " + table2.site;
+                    txtLog.Text = txtLog.Text + " Ship " + table2.table + " key to site " + table1.site;
                     txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                    List<string> tempsiteL1 = new List<string>();
 
-                    
+
                     using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
                     {
                         foreach (Depositor i in depositorTable)
                         {
                             file.WriteLine(i.getKey1());
-                            lstOuter.Items.Add(i.getKey1());
+                            lstSite1.Items.Add(i.getKey1());
                         }
                     }
 
@@ -423,24 +474,34 @@ namespace Project1
                         using (StreamReader sr = new StreamReader(shippingFileName))
                         {
                             string line;
-                            List<string> tempSite2 = new List<string>();
-
+                            HashSet<string> tempSite2 = new HashSet<string>();
                             
                             while ((line = sr.ReadLine()) != null)
                             {
-                                foreach (Depositor i in depositorTable)
+                                foreach (Customer i in customerTable)
                                 {
-                                    if (line.Equals(i.getKey1())) {
+                                    if (line.Equals(i.getCustName())) {
                                         tempSite2.Add(line);
-                                        lstInner.Items.Add(line);
+                                        break;                                       
                                     }
                                 }
                             }
-                            MessageBox.Show("" + lstInner.Items.Count);
-
+                            tempsiteL1 = tempSite2.ToList<string>();
+                            lstSite2.DataSource = tempsiteL1;
                         }
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved from site 2 : "+ shippingFileName;
+                        txtLog.Text = txtLog.Text + "shiped to site 2 : "+ shippingFileName;
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                        {
+                            foreach (string i in tempsiteL1)
+                            {
+                                file.WriteLine(i);
+                            }
+                        }
+
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
                     }
                     catch (Exception eee)
                     {
@@ -530,9 +591,24 @@ namespace Project1
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            lstInner.Items.Clear();
-            lstOuter.Items.Clear();
+            try { 
+                lstInner.Items.Clear();               
+            }
+            catch (Exception ee1) {
+                lstInner.DataSource = null;                
+            }
+            try {
+                lstOuter.Items.Clear();
+            }
+            catch (Exception ee2) {
+                lstOuter.DataSource = null;
+            }            
             tableSet.Clear();
+        }
+
+        private void btnClearLog_Click(object sender, EventArgs e)
+        {
+            txtLog.Text = "";
         }
     }
 }
