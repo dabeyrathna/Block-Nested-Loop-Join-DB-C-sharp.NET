@@ -27,11 +27,9 @@ namespace Project1
 
         List<RelationInfo> tableSet = new List<RelationInfo>();
 
-    
-        public string[] tables = {"branch", "branch", "account","depositor", "customer"};
+        public string[] tables = {"branch", "account","depositor", "customer"};
         public string[] outBuffer = new string[5];
-
-
+        
         public void readTable(string tabel, string site)
         {
             
@@ -222,11 +220,88 @@ namespace Project1
 
             return fileArray;
         }
-
-
+        
         public void twoWaySemijoin(RelationInfo table1, RelationInfo table2, string currentSite) {
             txtLog.Text = txtLog.Text + Environment.NewLine;
             txtLog.Text = txtLog.Text + "Ship table 1 key to merge, get table 2 key to min of not or ....... and return to"+currentSite;
+        }
+
+        public int blockSize(string t1) {
+            int blkSize = 1;
+
+
+            if (t1.Equals("customer"))
+            {
+                blkSize = Customer.numberOfBlock;
+            }
+            else if (t1.Equals("depositor"))
+            {
+                blkSize = Depositor.numberOfBlock;
+            }
+            else if (t1.Equals("branch"))
+            {
+                blkSize = Branch.numberOfBlock;
+            }
+            else if (t1.Equals("account"))
+            {
+                blkSize = Account.numberOfBlock;
+            }
+
+            return blkSize;
+        }
+
+        public void blockNestedJoin(string table1, string table2) {
+
+            MessageBox.Show("reciewd :  " + table1 + " and " + table2);
+            List<string> tempTable1 = new List<string>();
+            List<string> tempTable2 = new List<string>();
+
+            string line;
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(table1))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        tempTable1.Add(line);
+                    }
+                }
+                using (StreamReader sr = new StreamReader(table2))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        tempTable2.Add(line);
+                    }
+                }
+
+                lstInner.DataSource = tempTable1;
+                lstOuter.DataSource = tempTable2;
+            }
+            catch (Exception eee)
+            {
+                MessageBox.Show("File not found \n\n" + eee.ToString());
+            }
+
+
+            string[] t1 = table1.Split('_');
+            string[] t2 = table2.Split('_');
+
+            int innerBlockSize = blockSize(t1[0]);
+            int outerBlockSize = blockSize(t2[0]);
+
+            int blocksInTable1 = Math.Ceiling(tempTable1.));
+
+
+            if (innerBlockSize < outerBlockSize) {          // if buffer is small, smaller relation is in outer
+                int temp = innerBlockSize;
+                innerBlockSize = outerBlockSize;
+                outerBlockSize = temp;
+            }
+
+            
+
+
         }
 
         public void semiJoin(RelationInfo table1, RelationInfo table2) {
@@ -297,7 +372,7 @@ namespace Project1
 
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-
+                        blockNestedJoin(table1.table+"_"+table1.site+".txt",returndFileName);
                     }
                     catch (Exception eee)
                     {
@@ -354,7 +429,7 @@ namespace Project1
 
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-
+                        blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
                     }
                     catch (Exception eee)
                     {
@@ -442,7 +517,7 @@ namespace Project1
 
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-
+                        blockNestedJoin(table2.table + "_" + table2.site + ".txt", returndFileName);
                     }
 
                     catch (Exception eee)
@@ -502,6 +577,7 @@ namespace Project1
 
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+                        blockNestedJoin(table2.table + "_" + table2.site + ".txt", returndFileName);
                     }
                     catch (Exception eee)
                     {
@@ -558,6 +634,8 @@ namespace Project1
         {
             try
             {
+                clearSites();
+
                 string[] fromList = txtxFrom.Text.ToString().Split(',');
                 bool fileFlag = true;
 
@@ -587,6 +665,28 @@ namespace Project1
             catch (Exception err) {
                 txtSelect.Text = err.ToString();
             }
+        }
+
+        public void clearSites()
+        {
+            try
+            {
+                lstSite1.Items.Clear();
+                
+            }
+            catch (Exception ee1)
+            {
+                lstSite1.DataSource = null;
+            }
+            try
+            {
+                lstSite2.Items.Clear();
+            }
+            catch (Exception ee2)
+            {
+                lstSite2.DataSource = null;
+            }
+            
         }
 
         private void btnClear_Click(object sender, EventArgs e)

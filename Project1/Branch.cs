@@ -17,7 +17,7 @@ namespace Project1
         string branch_name;
         string branch_city;
         string assets;
-        int numberOfBlock = 7;
+        public static int numberOfBlock = 7;
 
         public string getBranchName() {
             return branch_name;

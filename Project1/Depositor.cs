@@ -15,7 +15,7 @@ namespace Project1
 
         string customer_name;
         string account_number;
-        int numberOfBlock = 7;
+        public static int numberOfBlock = 15;
 
 
 

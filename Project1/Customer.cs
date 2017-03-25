@@ -18,7 +18,7 @@ namespace Project1
         string customer_name;
         string customer_street;
         string customer_city;
-        int numberOfBlock = 8;
+        public static int numberOfBlock = 8;
 
         public string getCustName() {
             return this.customer_name;
