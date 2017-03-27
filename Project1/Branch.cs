@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Project1
 {
-    class Branch
+    public class Branch
     {
         public Branch(string branch_name, string branch_city, string assets) {
             this.assets = assets;

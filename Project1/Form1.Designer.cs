@@ -50,20 +50,20 @@
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rdo4 = new System.Windows.Forms.RadioButton();
+            this.rdo3 = new System.Windows.Forms.RadioButton();
+            this.rdo2 = new System.Windows.Forms.RadioButton();
+            this.rdo1 = new System.Windows.Forms.RadioButton();
             this.btnClearLog = new System.Windows.Forms.Button();
             this.btnExit = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lstOutBuffer = new System.Windows.Forms.ListBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.rdo1 = new System.Windows.Forms.RadioButton();
-            this.rdo2 = new System.Windows.Forms.RadioButton();
-            this.rdo3 = new System.Windows.Forms.RadioButton();
-            this.rdo4 = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.gridOut)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -78,7 +78,7 @@
             // 
             // txtSelect
             // 
-            this.txtSelect.Location = new System.Drawing.Point(72, 36);
+            this.txtSelect.Location = new System.Drawing.Point(71, 21);
             this.txtSelect.Name = "txtSelect";
             this.txtSelect.Size = new System.Drawing.Size(389, 20);
             this.txtSelect.TabIndex = 1;
@@ -122,7 +122,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(18, 40);
+            this.label4.Location = new System.Drawing.Point(17, 25);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(48, 13);
             this.label4.TabIndex = 3;
@@ -131,7 +131,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(18, 71);
+            this.label5.Location = new System.Drawing.Point(17, 56);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(38, 13);
             this.label5.TabIndex = 3;
@@ -139,7 +139,7 @@
             // 
             // txtxFrom
             // 
-            this.txtxFrom.Location = new System.Drawing.Point(72, 69);
+            this.txtxFrom.Location = new System.Drawing.Point(71, 54);
             this.txtxFrom.Name = "txtxFrom";
             this.txtxFrom.Size = new System.Drawing.Size(389, 20);
             this.txtxFrom.TabIndex = 5;
@@ -148,7 +148,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(18, 106);
+            this.label6.Location = new System.Drawing.Point(17, 91);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(48, 13);
             this.label6.TabIndex = 3;
@@ -156,20 +156,21 @@
             // 
             // txtWhere
             // 
-            this.txtWhere.Location = new System.Drawing.Point(72, 103);
+            this.txtWhere.Location = new System.Drawing.Point(71, 88);
+            this.txtWhere.Multiline = true;
             this.txtWhere.Name = "txtWhere";
-            this.txtWhere.Size = new System.Drawing.Size(389, 20);
+            this.txtWhere.Size = new System.Drawing.Size(389, 45);
             this.txtWhere.TabIndex = 6;
             this.txtWhere.Text = "customer = depositor";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(454, 15);
+            this.label7.Location = new System.Drawing.Point(491, 20);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(75, 13);
+            this.label7.Size = new System.Drawing.Size(38, 13);
             this.label7.TabIndex = 3;
-            this.label7.Text = "Current Server";
+            this.label7.Text = "Server";
             // 
             // cmbCurrServer
             // 
@@ -179,7 +180,7 @@
             "OMA",
             "HOU",
             "SFO"});
-            this.cmbCurrServer.Location = new System.Drawing.Point(530, 12);
+            this.cmbCurrServer.Location = new System.Drawing.Point(530, 16);
             this.cmbCurrServer.Name = "cmbCurrServer";
             this.cmbCurrServer.Size = new System.Drawing.Size(81, 21);
             this.cmbCurrServer.TabIndex = 7;
@@ -195,9 +196,9 @@
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(28, 349);
+            this.btnClear.Location = new System.Drawing.Point(28, 379);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(108, 23);
+            this.btnClear.Size = new System.Drawing.Size(108, 21);
             this.btnClear.TabIndex = 9;
             this.btnClear.Text = "clear";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -205,13 +206,13 @@
             // 
             // txtLog
             // 
-            this.txtLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtLog.Location = new System.Drawing.Point(1027, 19);
+            this.txtLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtLog.Location = new System.Drawing.Point(1083, 19);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(323, 614);
+            this.txtLog.Size = new System.Drawing.Size(267, 614);
             this.txtLog.TabIndex = 10;
             // 
             // lstSite1
@@ -221,7 +222,7 @@
             this.lstSite1.ItemHeight = 15;
             this.lstSite1.Location = new System.Drawing.Point(19, 62);
             this.lstSite1.Name = "lstSite1";
-            this.lstSite1.Size = new System.Drawing.Size(138, 364);
+            this.lstSite1.Size = new System.Drawing.Size(152, 409);
             this.lstSite1.TabIndex = 11;
             // 
             // lstSite2
@@ -229,16 +230,16 @@
             this.lstSite2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstSite2.FormattingEnabled = true;
             this.lstSite2.ItemHeight = 15;
-            this.lstSite2.Location = new System.Drawing.Point(174, 62);
+            this.lstSite2.Location = new System.Drawing.Point(170, 62);
             this.lstSite2.Name = "lstSite2";
-            this.lstSite2.Size = new System.Drawing.Size(143, 364);
+            this.lstSite2.Size = new System.Drawing.Size(217, 409);
             this.lstSite2.TabIndex = 12;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(32, 34);
+            this.label2.Location = new System.Drawing.Point(31, 35);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(107, 20);
             this.label2.TabIndex = 13;
@@ -248,7 +249,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(176, 34);
+            this.label3.Location = new System.Drawing.Point(187, 35);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(135, 20);
             this.label3.TabIndex = 14;
@@ -263,7 +264,7 @@
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(670, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(332, 441);
+            this.groupBox1.Size = new System.Drawing.Size(407, 490);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Semi - JOIN";
@@ -279,50 +280,12 @@
             this.groupBox2.Controls.Add(this.cmbCurrServer);
             this.groupBox2.Controls.Add(this.txtxFrom);
             this.groupBox2.Controls.Add(this.txtWhere);
-            this.groupBox2.Location = new System.Drawing.Point(28, 12);
+            this.groupBox2.Location = new System.Drawing.Point(28, 5);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(623, 132);
+            this.groupBox2.Size = new System.Drawing.Size(623, 139);
             this.groupBox2.TabIndex = 16;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Query";
-            // 
-            // btnClearLog
-            // 
-            this.btnClearLog.Location = new System.Drawing.Point(1112, 640);
-            this.btnClearLog.Name = "btnClearLog";
-            this.btnClearLog.Size = new System.Drawing.Size(133, 30);
-            this.btnClearLog.TabIndex = 17;
-            this.btnClearLog.Text = "Clear Log";
-            this.btnClearLog.UseVisualStyleBackColor = true;
-            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
-            // 
-            // btnExit
-            // 
-            this.btnExit.Location = new System.Drawing.Point(28, 379);
-            this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(108, 21);
-            this.btnExit.TabIndex = 18;
-            this.btnExit.Text = "Exit";
-            this.btnExit.UseVisualStyleBackColor = true;
-            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.lstOutBuffer);
-            this.groupBox3.Location = new System.Drawing.Point(678, 472);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(324, 198);
-            this.groupBox3.TabIndex = 19;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Out Buffer";
-            // 
-            // lstOutBuffer
-            // 
-            this.lstOutBuffer.FormattingEnabled = true;
-            this.lstOutBuffer.Location = new System.Drawing.Point(27, 33);
-            this.lstOutBuffer.Name = "lstOutBuffer";
-            this.lstOutBuffer.Size = new System.Drawing.Size(276, 147);
-            this.lstOutBuffer.TabIndex = 0;
             // 
             // groupBox4
             // 
@@ -336,17 +299,28 @@
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
             // 
-            // rdo1
+            // rdo4
             // 
-            this.rdo1.AutoSize = true;
-            this.rdo1.Location = new System.Drawing.Point(32, 8);
-            this.rdo1.Name = "rdo1";
-            this.rdo1.Size = new System.Drawing.Size(62, 17);
-            this.rdo1.TabIndex = 0;
-            this.rdo1.TabStop = true;
-            this.rdo1.Text = "Query 1";
-            this.rdo1.UseVisualStyleBackColor = true;
-            this.rdo1.CheckedChanged += new System.EventHandler(this.rdo1_CheckedChanged);
+            this.rdo4.AutoSize = true;
+            this.rdo4.Location = new System.Drawing.Point(32, 62);
+            this.rdo4.Name = "rdo4";
+            this.rdo4.Size = new System.Drawing.Size(62, 17);
+            this.rdo4.TabIndex = 3;
+            this.rdo4.TabStop = true;
+            this.rdo4.Text = "Query 4";
+            this.rdo4.UseVisualStyleBackColor = true;
+            // 
+            // rdo3
+            // 
+            this.rdo3.AutoSize = true;
+            this.rdo3.Location = new System.Drawing.Point(32, 44);
+            this.rdo3.Name = "rdo3";
+            this.rdo3.Size = new System.Drawing.Size(62, 17);
+            this.rdo3.TabIndex = 2;
+            this.rdo3.TabStop = true;
+            this.rdo3.Text = "Query 3";
+            this.rdo3.UseVisualStyleBackColor = true;
+            this.rdo3.CheckedChanged += new System.EventHandler(this.rdo3_CheckedChanged);
             // 
             // rdo2
             // 
@@ -360,27 +334,55 @@
             this.rdo2.UseVisualStyleBackColor = true;
             this.rdo2.CheckedChanged += new System.EventHandler(this.rdo2_CheckedChanged);
             // 
-            // rdo3
+            // rdo1
             // 
-            this.rdo3.AutoSize = true;
-            this.rdo3.Location = new System.Drawing.Point(32, 44);
-            this.rdo3.Name = "rdo3";
-            this.rdo3.Size = new System.Drawing.Size(62, 17);
-            this.rdo3.TabIndex = 2;
-            this.rdo3.TabStop = true;
-            this.rdo3.Text = "Query 3";
-            this.rdo3.UseVisualStyleBackColor = true;
+            this.rdo1.AutoSize = true;
+            this.rdo1.Location = new System.Drawing.Point(32, 8);
+            this.rdo1.Name = "rdo1";
+            this.rdo1.Size = new System.Drawing.Size(62, 17);
+            this.rdo1.TabIndex = 0;
+            this.rdo1.TabStop = true;
+            this.rdo1.Text = "Query 1";
+            this.rdo1.UseVisualStyleBackColor = true;
+            this.rdo1.CheckedChanged += new System.EventHandler(this.rdo1_CheckedChanged);
             // 
-            // rdo4
+            // btnClearLog
             // 
-            this.rdo4.AutoSize = true;
-            this.rdo4.Location = new System.Drawing.Point(32, 62);
-            this.rdo4.Name = "rdo4";
-            this.rdo4.Size = new System.Drawing.Size(62, 17);
-            this.rdo4.TabIndex = 3;
-            this.rdo4.TabStop = true;
-            this.rdo4.Text = "Query 4";
-            this.rdo4.UseVisualStyleBackColor = true;
+            this.btnClearLog.Location = new System.Drawing.Point(1112, 640);
+            this.btnClearLog.Name = "btnClearLog";
+            this.btnClearLog.Size = new System.Drawing.Size(133, 30);
+            this.btnClearLog.TabIndex = 17;
+            this.btnClearLog.Text = "Clear Log";
+            this.btnClearLog.UseVisualStyleBackColor = true;
+            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
+            // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(142, 379);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(108, 21);
+            this.btnExit.TabIndex = 18;
+            this.btnExit.Text = "Exit";
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.lstOutBuffer);
+            this.groupBox3.Location = new System.Drawing.Point(670, 508);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(407, 162);
+            this.groupBox3.TabIndex = 19;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Out Buffer";
+            // 
+            // lstOutBuffer
+            // 
+            this.lstOutBuffer.FormattingEnabled = true;
+            this.lstOutBuffer.Location = new System.Drawing.Point(27, 31);
+            this.lstOutBuffer.Name = "lstOutBuffer";
+            this.lstOutBuffer.Size = new System.Drawing.Size(360, 108);
+            this.lstOutBuffer.TabIndex = 0;
             // 
             // Form1
             // 
@@ -408,9 +410,9 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
