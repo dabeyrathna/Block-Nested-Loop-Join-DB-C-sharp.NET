@@ -24,6 +24,16 @@ namespace Project1
             return this.customer_name;
         }
 
+        public string getStreet()
+        {
+            return this.customer_street;
+        }
+
+        public string getCity()
+        {
+            return this.customer_city;
+        }
+
         public string getKey()
         {
             return this.customer_name;

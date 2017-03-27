@@ -17,7 +17,14 @@ namespace Project1
         string account_number;
         public static int numberOfBlock = 15;
 
-
+        public string getCustName()
+        {
+            return this.customer_name;
+        }
+        public string getAccNo()
+        {
+            return this.account_number;
+        }
 
         public string getKey1()
         {

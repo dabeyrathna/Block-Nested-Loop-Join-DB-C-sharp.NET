@@ -22,10 +22,18 @@ namespace Project1
         public string getAccountName() {
             return account_number;
         }
+        public string getBranchName()
+        {
+            return branch_name;
+        }
+        public string getBalance()
+        {
+            return balance;
+        }
 
         public string getKey()
         {
-            return this.branch_name;
+            return this.account_number;
         }
 
         public int numberOfBlocks()

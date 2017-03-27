@@ -41,7 +41,7 @@
             this.txtWhere = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cmbCurrServer = new System.Windows.Forms.ComboBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.gridOut = new System.Windows.Forms.DataGridView();
             this.btnClear = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.lstSite1 = new System.Windows.Forms.ListBox();
@@ -51,14 +51,24 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnClearLog = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.btnExit = new System.Windows.Forms.Button();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lstOutBuffer = new System.Windows.Forms.ListBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.rdo1 = new System.Windows.Forms.RadioButton();
+            this.rdo2 = new System.Windows.Forms.RadioButton();
+            this.rdo3 = new System.Windows.Forms.RadioButton();
+            this.rdo4 = new System.Windows.Forms.RadioButton();
+            ((System.ComponentModel.ISupportInitialize)(this.gridOut)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(257, 350);
+            this.button1.Location = new System.Drawing.Point(257, 359);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(158, 41);
             this.button1.TabIndex = 0;
@@ -133,6 +143,7 @@
             this.txtxFrom.Name = "txtxFrom";
             this.txtxFrom.Size = new System.Drawing.Size(389, 20);
             this.txtxFrom.TabIndex = 5;
+            this.txtxFrom.Text = "customer";
             // 
             // label6
             // 
@@ -149,11 +160,12 @@
             this.txtWhere.Name = "txtWhere";
             this.txtWhere.Size = new System.Drawing.Size(389, 20);
             this.txtWhere.TabIndex = 6;
+            this.txtWhere.Text = "customer = depositor";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(508, 12);
+            this.label7.Location = new System.Drawing.Point(454, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 13);
             this.label7.TabIndex = 3;
@@ -167,22 +179,23 @@
             "OMA",
             "HOU",
             "SFO"});
-            this.cmbCurrServer.Location = new System.Drawing.Point(490, 35);
+            this.cmbCurrServer.Location = new System.Drawing.Point(530, 12);
             this.cmbCurrServer.Name = "cmbCurrServer";
-            this.cmbCurrServer.Size = new System.Drawing.Size(121, 21);
+            this.cmbCurrServer.Size = new System.Drawing.Size(81, 21);
             this.cmbCurrServer.TabIndex = 7;
+            this.cmbCurrServer.SelectedIndexChanged += new System.EventHandler(this.cmbCurrServer_SelectedIndexChanged);
             // 
-            // dataGridView1
+            // gridOut
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(28, 406);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(623, 276);
-            this.dataGridView1.TabIndex = 8;
+            this.gridOut.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridOut.Location = new System.Drawing.Point(28, 406);
+            this.gridOut.Name = "gridOut";
+            this.gridOut.Size = new System.Drawing.Size(623, 276);
+            this.gridOut.TabIndex = 8;
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(539, 359);
+            this.btnClear.Location = new System.Drawing.Point(28, 349);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(108, 23);
             this.btnClear.TabIndex = 9;
@@ -208,7 +221,7 @@
             this.lstSite1.ItemHeight = 15;
             this.lstSite1.Location = new System.Drawing.Point(19, 62);
             this.lstSite1.Name = "lstSite1";
-            this.lstSite1.Size = new System.Drawing.Size(138, 559);
+            this.lstSite1.Size = new System.Drawing.Size(138, 364);
             this.lstSite1.TabIndex = 11;
             // 
             // lstSite2
@@ -218,7 +231,7 @@
             this.lstSite2.ItemHeight = 15;
             this.lstSite2.Location = new System.Drawing.Point(174, 62);
             this.lstSite2.Name = "lstSite2";
-            this.lstSite2.Size = new System.Drawing.Size(143, 559);
+            this.lstSite2.Size = new System.Drawing.Size(143, 364);
             this.lstSite2.TabIndex = 12;
             // 
             // label2
@@ -250,13 +263,14 @@
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.Location = new System.Drawing.Point(670, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(332, 670);
+            this.groupBox1.Size = new System.Drawing.Size(332, 441);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Semi - JOIN";
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.groupBox4);
             this.groupBox2.Controls.Add(this.txtSelect);
             this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.label4);
@@ -282,30 +296,121 @@
             this.btnClearLog.UseVisualStyleBackColor = true;
             this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
             // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(28, 379);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(108, 21);
+            this.btnExit.TabIndex = 18;
+            this.btnExit.Text = "Exit";
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.lstOutBuffer);
+            this.groupBox3.Location = new System.Drawing.Point(678, 472);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(324, 198);
+            this.groupBox3.TabIndex = 19;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Out Buffer";
+            // 
+            // lstOutBuffer
+            // 
+            this.lstOutBuffer.FormattingEnabled = true;
+            this.lstOutBuffer.Location = new System.Drawing.Point(27, 33);
+            this.lstOutBuffer.Name = "lstOutBuffer";
+            this.lstOutBuffer.Size = new System.Drawing.Size(276, 147);
+            this.lstOutBuffer.TabIndex = 0;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.rdo4);
+            this.groupBox4.Controls.Add(this.rdo3);
+            this.groupBox4.Controls.Add(this.rdo2);
+            this.groupBox4.Controls.Add(this.rdo1);
+            this.groupBox4.Location = new System.Drawing.Point(490, 40);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(121, 83);
+            this.groupBox4.TabIndex = 8;
+            this.groupBox4.TabStop = false;
+            // 
+            // rdo1
+            // 
+            this.rdo1.AutoSize = true;
+            this.rdo1.Location = new System.Drawing.Point(32, 8);
+            this.rdo1.Name = "rdo1";
+            this.rdo1.Size = new System.Drawing.Size(62, 17);
+            this.rdo1.TabIndex = 0;
+            this.rdo1.TabStop = true;
+            this.rdo1.Text = "Query 1";
+            this.rdo1.UseVisualStyleBackColor = true;
+            this.rdo1.CheckedChanged += new System.EventHandler(this.rdo1_CheckedChanged);
+            // 
+            // rdo2
+            // 
+            this.rdo2.AutoSize = true;
+            this.rdo2.Location = new System.Drawing.Point(32, 26);
+            this.rdo2.Name = "rdo2";
+            this.rdo2.Size = new System.Drawing.Size(62, 17);
+            this.rdo2.TabIndex = 1;
+            this.rdo2.TabStop = true;
+            this.rdo2.Text = "Query 2";
+            this.rdo2.UseVisualStyleBackColor = true;
+            this.rdo2.CheckedChanged += new System.EventHandler(this.rdo2_CheckedChanged);
+            // 
+            // rdo3
+            // 
+            this.rdo3.AutoSize = true;
+            this.rdo3.Location = new System.Drawing.Point(32, 44);
+            this.rdo3.Name = "rdo3";
+            this.rdo3.Size = new System.Drawing.Size(62, 17);
+            this.rdo3.TabIndex = 2;
+            this.rdo3.TabStop = true;
+            this.rdo3.Text = "Query 3";
+            this.rdo3.UseVisualStyleBackColor = true;
+            // 
+            // rdo4
+            // 
+            this.rdo4.AutoSize = true;
+            this.rdo4.Location = new System.Drawing.Point(32, 62);
+            this.rdo4.Name = "rdo4";
+            this.rdo4.Size = new System.Drawing.Size(62, 17);
+            this.rdo4.TabIndex = 3;
+            this.rdo4.TabStop = true;
+            this.rdo4.Text = "Query 4";
+            this.rdo4.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 722);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnClearLog);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.btnClear);
-            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.lblInner);
             this.Controls.Add(this.lblOuter);
             this.Controls.Add(this.lstInner);
             this.Controls.Add(this.lstOuter);
             this.Controls.Add(this.button1);
+            this.Controls.Add(this.gridOut);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Block Nested Loop Join";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridOut)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -326,7 +431,7 @@
         private System.Windows.Forms.TextBox txtWhere;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cmbCurrServer;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView gridOut;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.ListBox lstSite1;
@@ -336,6 +441,14 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnClearLog;
+        private System.Windows.Forms.Button btnExit;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ListBox lstOutBuffer;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton rdo4;
+        private System.Windows.Forms.RadioButton rdo3;
+        private System.Windows.Forms.RadioButton rdo2;
+        private System.Windows.Forms.RadioButton rdo1;
     }
 }
 
