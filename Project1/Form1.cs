@@ -202,16 +202,19 @@ namespace Project1
 
                 bool changed = false;
 
-                if (t1BlockSize < mainMemorySize)
+                if (t1BlockSize < mainMemorySize && t2BlockSize >= mainMemorySize)
                 {
+                    // then table1 is Inner relation and Table2 is Outer
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (t2BlockSize < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize && t1BlockSize >= mainMemorySize)
                 {
+                    // then table2 is Inner relation and Table1 is Outer
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
+
                     int temp = t1BlockSize;
                     t1BlockSize = t2BlockSize;
                     t2BlockSize = temp;
@@ -219,12 +222,39 @@ namespace Project1
                     temp = innerPerBlock;
                     innerPerBlock = outerPerBlock;
                     outerPerBlock = temp;
+
+                }
+                else if (t1BlockSize < mainMemorySize && t2BlockSize < mainMemorySize)
+                {
+                    // of both the relations are fit in main memory
+                    if (t1BlockSize <= t2BlockSize)
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                    else
+                    {
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
+                    }
                 }
                 else
                 {
+                    /* if both relations are contain blocks more than main memory
+                       then smaller relation is used as Outer relation
+                       I/O complexity is O(m/kB * (n/B + k))  */
+
                     if (t1BlockSize < t2BlockSize)
                     {
-
                         changed = true;
 
                         inner = tempTable2;
@@ -433,16 +463,19 @@ namespace Project1
 
                 bool changed = false;
 
-                if (t1BlockSize < mainMemorySize)
+                if (t1BlockSize < mainMemorySize && t2BlockSize >= mainMemorySize)
                 {
+                    // then table1 is Inner relation and Table2 is Outer
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (t2BlockSize < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize && t1BlockSize >= mainMemorySize)
                 {
+                    // then table2 is Inner relation and Table1 is Outer
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
+
                     int temp = t1BlockSize;
                     t1BlockSize = t2BlockSize;
                     t2BlockSize = temp;
@@ -450,12 +483,39 @@ namespace Project1
                     temp = innerPerBlock;
                     innerPerBlock = outerPerBlock;
                     outerPerBlock = temp;
+
+                }
+                else if (t1BlockSize < mainMemorySize && t2BlockSize < mainMemorySize)
+                {
+                    // of both the relations are fit in main memory
+                    if (t1BlockSize <= t2BlockSize)
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                    else
+                    {
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
+                    }
                 }
                 else
                 {
+                    /* if both relations are contain blocks more than main memory
+                       then smaller relation is used as Outer relation
+                       I/O complexity is O(m/kB * (n/B + k))  */
+
                     if (t1BlockSize < t2BlockSize)
                     {
-
                         changed = true;
 
                         inner = tempTable2;
@@ -474,7 +534,6 @@ namespace Project1
                         outer = tempTable2;
                     }
                 }
-
 
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter("outer.txt", true))
                 {
@@ -667,16 +726,19 @@ namespace Project1
 
                 bool changed = false;
 
-                if (t1BlockSize < mainMemorySize)
+                if (t1BlockSize < mainMemorySize && t2BlockSize >= mainMemorySize)
                 {
+                    // then table1 is Inner relation and Table2 is Outer
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (t2BlockSize < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize && t1BlockSize >= mainMemorySize)
                 {
+                    // then table2 is Inner relation and Table1 is Outer
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
+
                     int temp = t1BlockSize;
                     t1BlockSize = t2BlockSize;
                     t2BlockSize = temp;
@@ -684,12 +746,39 @@ namespace Project1
                     temp = innerPerBlock;
                     innerPerBlock = outerPerBlock;
                     outerPerBlock = temp;
+
+                }
+                else if (t1BlockSize < mainMemorySize && t2BlockSize < mainMemorySize)
+                {
+                    // of both the relations are fit in main memory
+                    if (t1BlockSize <= t2BlockSize)
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                    else
+                    {
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
+                    }
                 }
                 else
                 {
+                    /* if both relations are contain blocks more than main memory
+                       then smaller relation is used as Outer relation
+                       I/O complexity is O(m/kB * (n/B + k))  */
+
                     if (t1BlockSize < t2BlockSize)
                     {
-
                         changed = true;
 
                         inner = tempTable2;
@@ -708,7 +797,6 @@ namespace Project1
                         outer = tempTable2;
                     }
                 }
-
                 try
                 {
                     System.IO.File.Delete("outer.txt");
@@ -1029,16 +1117,19 @@ namespace Project1
 
                 bool changed = false;
 
-                if (t1BlockSize < mainMemorySize)
+                if (t1BlockSize < mainMemorySize && t2BlockSize >= mainMemorySize)
                 {
+                    // then table1 is Inner relation and Table2 is Outer
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (t2BlockSize < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize && t1BlockSize >= mainMemorySize)
                 {
+                    // then table2 is Inner relation and Table1 is Outer
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
+
                     int temp = t1BlockSize;
                     t1BlockSize = t2BlockSize;
                     t2BlockSize = temp;
@@ -1046,12 +1137,39 @@ namespace Project1
                     temp = innerPerBlock;
                     innerPerBlock = outerPerBlock;
                     outerPerBlock = temp;
+
+                }
+                else if (t1BlockSize < mainMemorySize && t2BlockSize < mainMemorySize)
+                {
+                    // of both the relations are fit in main memory
+                    if (t1BlockSize <= t2BlockSize)
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                    else
+                    {
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
+                    }
                 }
                 else
                 {
+                    /* if both relations are contain blocks more than main memory
+                       then smaller relation is used as Outer relation
+                       I/O complexity is O(m/kB * (n/B + k))  */
+
                     if (t1BlockSize < t2BlockSize)
                     {
-
                         changed = true;
 
                         inner = tempTable2;
@@ -1070,7 +1188,6 @@ namespace Project1
                         outer = tempTable2;
                     }
                 }
-
 
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter("outer.txt", true))
                 {
@@ -1233,16 +1350,19 @@ namespace Project1
 
                 bool changed = false;
 
-                if (t1BlockSize < mainMemorySize)
+                if (t1BlockSize < mainMemorySize && t2BlockSize >= mainMemorySize)
                 {
+                    // then table1 is Inner relation and Table2 is Outer
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (t2BlockSize < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize && t1BlockSize >= mainMemorySize)
                 {
+                    // then table2 is Inner relation and Table1 is Outer
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
+
                     int temp = t1BlockSize;
                     t1BlockSize = t2BlockSize;
                     t2BlockSize = temp;
@@ -1250,12 +1370,39 @@ namespace Project1
                     temp = innerPerBlock;
                     innerPerBlock = outerPerBlock;
                     outerPerBlock = temp;
+
+                }
+                else if (t1BlockSize < mainMemorySize && t2BlockSize < mainMemorySize)
+                {
+                    // of both the relations are fit in main memory
+                    if (t1BlockSize <= t2BlockSize)
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                    else
+                    {
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
+                    }
                 }
                 else
                 {
+                    /* if both relations are contain blocks more than main memory
+                       then smaller relation is used as Outer relation
+                       I/O complexity is O(m/kB * (n/B + k))  */
+
                     if (t1BlockSize < t2BlockSize)
                     {
-
                         changed = true;
 
                         inner = tempTable2;
@@ -1386,7 +1533,7 @@ namespace Project1
         }
 
 
-        // Query 1 and 2  block nested loop join
+        // Query 1 block nested loop join
         public void blockNestedJoin(string table1, string table2) {
 
             clearGrid();
@@ -1406,6 +1553,7 @@ namespace Project1
 
             List<string> inner = new List<string>();
             List<string> outer = new List<string>();
+
             int mainMemorySize = this.mainMemorySize;
 
             string line;
@@ -1441,24 +1589,24 @@ namespace Project1
                 int t2BlockSize = blockSize(t2[0], tempTable2.Count);   // Number of blocks contains in relation 2
 
                 // Display block details
-                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize+" blocks");
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize +" blocks");
                 
                 bool changed = false;
 
 
-                // Inner and Outer relations selection process
+                /* Inner and Outer relations selection process
 
-                // If one of the relation is contain blocks less than main memory size
-                // Make the small input the inner
-                // I/O complexity is O(m/B + n/B)
+                 If one of the relation is contain blocks less than main memory size
+                 Make the small input the inner
+                 I/O complexity is O(m/B + n/B)  */
 
-                if (t1BlockSize < mainMemorySize)
+                if (t1BlockSize < mainMemorySize && t2BlockSize >= mainMemorySize)
                 {
                     // then table1 is Inner relation and Table2 is Outer
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (t2BlockSize < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize && t1BlockSize >= mainMemorySize)
                 {
                     // then table2 is Inner relation and Table1 is Outer
                     changed = true;
@@ -1474,11 +1622,31 @@ namespace Project1
                     outerPerBlock = temp;
 
                 }
+                else if (t1BlockSize < mainMemorySize && t2BlockSize < mainMemorySize) {
+                    // of both the relations are fit in main memory
+                    if (t1BlockSize <= t2BlockSize){
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                    else {
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
+                    }
+                }
                 else
                 {
-                    // if both relations are contain blocks more than main memory
-                    // then smaller relation is used as Outer relation
-                    // I/O complexity is O(m/kB * (n/B + k))
+                    /* if both relations are contain blocks more than main memory
+                       then smaller relation is used as Outer relation
+                       I/O complexity is O(m/kB * (n/B + k))  */
 
                     if (t1BlockSize < t2BlockSize)
                     {
@@ -1706,7 +1874,7 @@ namespace Project1
             }
             MessageBox.Show("tuples =" + tuples + "   PerBlock = " + blkPer);
             double numOfBlocks = tuples / blkPer;
-            return (int)(numOfBlocks + 1);
+            return (int)(numOfBlocks + 1);              //   return (int)Math.Celing(tuples / blkPer);
         }
         
 
@@ -1733,13 +1901,11 @@ namespace Project1
                     shippingFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
                     returndFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
 
-                    try
-                    {
+                    try { 
                         System.IO.File.Delete(shippingFileName);
                         System.IO.File.Delete(returndFileName);
                     }
-                    catch (System.IO.IOException eee)
-                    { }
+                    catch (System.IO.IOException eee){ }
 
                     if (table1.table.Equals("customer") && table2.table.Equals("depositor"))
                     {
@@ -2184,7 +2350,6 @@ namespace Project1
             {
                 try
                 {
-                    //MessageBox.Show("customer_" + site.ToUpper() + ".txt");
                     using (StreamReader sr = new StreamReader("customer_HOU.txt"))
                     {
                         string line;
@@ -2250,7 +2415,6 @@ namespace Project1
             {
                 try
                 {
-                    //MessageBox.Show("depositor_" + site.ToUpper() + ".txt");
                     using (StreamReader sr = new StreamReader("depositor_" + site.ToUpper() + ".txt"))
                     {
                         string line;
@@ -2270,35 +2434,6 @@ namespace Project1
             }
 
             tableSet.Add(new RelationInfo(tabel, site.ToUpper()));
-
-            /*
-            if (tabel.Equals("customer")) {
-                foreach (Customer c in customerTable) {
-                    lstInner.Items.Add(c.getCustName());
-                }
-            }
-            else if (tabel.Equals("account")) {
-                foreach (Account c in accountTable)
-                {
-                    lstOuter.Items.Add(c.getAccountName());
-                }
-            }
-            else if (tabel.Equals("branch"))
-            {
-                foreach (Branch c in branchTable)
-                {
-                    lstOuter.Items.Add(c.getBranchName());
-                }
-            }
-            else if (tabel.Equals("depositor"))
-            {
-                foreach (Depositor c in depositorTable)
-                {
-                    lstOuter.Items.Add(c.getKey1()+","+c.getKey2());
-                }
-            }
-
-        */
         }
 
         // Read tables in join process order
