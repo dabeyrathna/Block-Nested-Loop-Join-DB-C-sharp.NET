@@ -15,7 +15,9 @@ namespace Project1
 
         string customer_name;
         string account_number;
-        public static int numberOfBlock = 15;
+        public static int numberOfBlock = 4;
+        public static int tuplesPerBlock = 15;
+
 
         public string getCustName()
         {

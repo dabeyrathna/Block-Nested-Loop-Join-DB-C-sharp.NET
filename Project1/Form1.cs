@@ -75,8 +75,7 @@ namespace Project1
                 try
                 {
                     fileName = "branch_" + site.ToUpper() + ".txt";
-
-                    //MessageBox.Show(fileName);
+                
                     using (StreamReader sr = new StreamReader(fileName))
                     {
                         string line;
@@ -118,7 +117,7 @@ namespace Project1
             {
                 try
                 {
-                    MessageBox.Show("depositor_" + site.ToUpper() + ".txt");
+                    //MessageBox.Show("depositor_" + site.ToUpper() + ".txt");
                     using (StreamReader sr = new StreamReader("depositor_" + site.ToUpper() + ".txt"))
                     {
                         string line;
@@ -357,40 +356,50 @@ namespace Project1
                 string[] t1 = table1.Split('_');
                 string[] t2 = table2.Split('_');
 
-                int innerBlockSize = blockSize(t1[0]);
-                int outerBlockSize = blockSize(t2[0]);
+                int t1BlockSize = blockSize(t1[0],tempTable1.Count);
+                int t2BlockSize = blockSize(t2[0],tempTable2.Count);
 
-                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
-                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+                int innerPerBlock = perBlock(t1[0]);
+                int outerPerBlock = perBlock(t2[0]);
+
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks   AND   Relation 2 has " + t2BlockSize+" blocks");
 
                 bool changed = false;
 
-                if (blocksInTable1 < mainMemorySize)
+                if (t1BlockSize < mainMemorySize)
                 {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize)
                 {
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
-                    int temp = innerBlockSize;
-                    innerBlockSize = outerBlockSize;
-                    outerBlockSize = temp;
+                    int temp = t1BlockSize;
+                    t1BlockSize = t2BlockSize;
+                    t2BlockSize = temp;
+
+                    temp = innerPerBlock;
+                    innerPerBlock = outerPerBlock;
+                    outerPerBlock = temp;
                 }
                 else
                 {
-                    if (blocksInTable1 < blocksInTable2)
+                    if (t1BlockSize < t2BlockSize)
                     {
 
                         changed = true;
 
                         inner = tempTable2;
                         outer = tempTable1;
-                        int temp = innerBlockSize;
-                        innerBlockSize = outerBlockSize;
-                        outerBlockSize = temp;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
                     }
                     else
                     {
@@ -424,26 +433,25 @@ namespace Project1
                 table.Columns.Add("Street", typeof(string));
                 table.Columns.Add("City", typeof(string));
 
-                MessageBox.Show("Outer block :" + outerBlockSize + "  Inner block = " + innerBlockSize);
+                //MessageBox.Show("Outer block :" + t2BlockSize + "  Inner block = " + t1BlockSize);
 
 
-                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
-                    MessageBox.Show("MM = " + mainMemorySize + "   " + " -------Block " + " = " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
-                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
                     }
                     lstOuter.Items.Add("___________________________");
 
-                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
-                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
@@ -639,40 +647,52 @@ namespace Project1
                 }
 
 
-                int innerBlockSize = blockSize("depositor");
-                int outerBlockSize = blockSize("account");
+                int t1BlockSize = blockSize("depositor", tempTable1.Count);
+                int t2BlockSize = blockSize("account", tempTable2.Count);
 
-                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
-                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+                int innerPerBlock = perBlock("depositor");
+                int outerPerBlock = perBlock("account");
+
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize+" blocks");
+
+          
 
                 bool changed = false;
 
-                if (blocksInTable1 < mainMemorySize)
+                if (t1BlockSize < mainMemorySize)
                 {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize)
                 {
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
-                    int temp = innerBlockSize;
-                    innerBlockSize = outerBlockSize;
-                    outerBlockSize = temp;
+                    int temp = t1BlockSize;
+                    t1BlockSize = t2BlockSize;
+                    t2BlockSize = temp;
+
+                    temp = innerPerBlock;
+                    innerPerBlock = outerPerBlock;
+                    outerPerBlock = temp;
                 }
                 else
                 {
-                    if (blocksInTable1 < blocksInTable2)
+                    if (t1BlockSize < t2BlockSize)
                     {
 
                         changed = true;
 
                         inner = tempTable2;
                         outer = tempTable1;
-                        int temp = innerBlockSize;
-                        innerBlockSize = outerBlockSize;
-                        outerBlockSize = temp;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
                     }
                     else
                     {
@@ -715,11 +735,11 @@ namespace Project1
                 table.Columns.Add("Balance", typeof(string));
                 string fromSite1 = "";
 
-                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
-                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
@@ -727,11 +747,11 @@ namespace Project1
                     lstOuter.Items.Add("___________________________");
                     HashSet<string> duplMap = new HashSet<string>();
                     
-                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
-                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
@@ -849,7 +869,7 @@ namespace Project1
                 if (custPossitive.Count > custNegative.Count)
                 {
                     possitiveQ4 = false;
-                    MessageBox.Show("Non matching set is exporting");
+                    MessageBox.Show("Non matching set is exporting...");
                     foreach (string ss1 in custNegative)
                     {
                         lstSite2.Items.Add(ss1);
@@ -859,7 +879,7 @@ namespace Project1
                 else
                 {
                     possitiveQ4 = true;
-                    MessageBox.Show("Matching set is exporting");
+                    MessageBox.Show("Matching set is exporting...");
                     foreach (string ss1 in custPossitive)
                     {
                         lstSite2.Items.Add(ss1);
@@ -929,40 +949,51 @@ namespace Project1
                 }
 
 
-                int innerBlockSize = blockSize("depositor");
-                int outerBlockSize = blockSize("account");
+                int t1BlockSize = blockSize("depositor", tempTable1.Count);
+                int t2BlockSize = blockSize("account", tempTable2.Count);
 
-                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
-                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+                int innerPerBlock = perBlock("depositor");
+                int outerPerBlock = perBlock("account");
+
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize+" blocks");
+
 
                 bool changed = false;
 
-                if (blocksInTable1 < mainMemorySize)
+                if (t1BlockSize < mainMemorySize)
                 {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize)
                 {
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
-                    int temp = innerBlockSize;
-                    innerBlockSize = outerBlockSize;
-                    outerBlockSize = temp;
+                    int temp = t1BlockSize;
+                    t1BlockSize = t2BlockSize;
+                    t2BlockSize = temp;
+
+                    temp = innerPerBlock;
+                    innerPerBlock = outerPerBlock;
+                    outerPerBlock = temp;
                 }
                 else
                 {
-                    if (blocksInTable1 < blocksInTable2)
+                    if (t1BlockSize < t2BlockSize)
                     {
 
                         changed = true;
 
                         inner = tempTable2;
                         outer = tempTable1;
-                        int temp = innerBlockSize;
-                        innerBlockSize = outerBlockSize;
-                        outerBlockSize = temp;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
                     }
                     else
                     {
@@ -997,22 +1028,22 @@ namespace Project1
 
                 string fromSite1 = "";
 
-                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
-                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
                     }
                     lstOuter.Items.Add("___________________________");
 
-                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
-                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
@@ -1084,28 +1115,56 @@ namespace Project1
             }
         }
 
-        public int blockSize(string t1) {
-            int blkSize = 1;
+        public int perBlock(string t1)
+        {
+            int blkPer = 1;
 
+            if (t1.Equals("customer"))
+            {
+                blkPer = Customer.tuplesPerBlock;
+            }
+            else if (t1.Equals("depositor"))
+            {
+                blkPer = Depositor.tuplesPerBlock;
+            }
+            else if (t1.Equals("branch"))
+            {
+                blkPer = Branch.tuplesPerBlock;
+            }
+            else if (t1.Equals("account"))
+            {
+                blkPer = Account.tuplesPerBlock;
+            }
+            return blkPer;
+        }
+
+        public int blockSize(string t1, int tuples) {
+            int blkSize = 1;
+            int blkPer = 1;
 
             if (t1.Equals("customer"))
             {
                 blkSize = Customer.numberOfBlock;
+                blkPer = Customer.tuplesPerBlock;
             }
             else if (t1.Equals("depositor"))
             {
                 blkSize = Depositor.numberOfBlock;
+                blkPer = Depositor.tuplesPerBlock;
             }
             else if (t1.Equals("branch"))
             {
                 blkSize = Branch.numberOfBlock;
+                blkPer = Branch.tuplesPerBlock;
             }
             else if (t1.Equals("account"))
             {
                 blkSize = Account.numberOfBlock;
+                blkPer = Account.tuplesPerBlock;
             }
-
-            return blkSize;
+            MessageBox.Show("tuples ="+tuples+"   PerBlock = "+ blkPer);
+            double numOfBlocks = tuples / blkPer;
+            return (int)(numOfBlocks+1);
         }
 
         public void blockNestedJoin(string table1, string table2) {
@@ -1160,40 +1219,52 @@ namespace Project1
                 string[] t1 = table1.Split('_');
                 string[] t2 = table2.Split('_');
 
-                int innerBlockSize = blockSize(t1[0]);
-                int outerBlockSize = blockSize(t2[0]);
+                int t1BlockSize = blockSize(t1[0], tempTable1.Count);
+                int t2BlockSize = blockSize(t2[0], tempTable2.Count);
 
-                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
-                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+                int innerPerBlock = perBlock(t1[0]);
+                int outerPerBlock = perBlock(t2[0]);
+
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize+" blocks");
+
 
                 bool changed = false;
 
-                if (blocksInTable1 < mainMemorySize)
+                if (t1BlockSize < mainMemorySize)
                 {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize)
                 {
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
-                    int temp = innerBlockSize;
-                    innerBlockSize = outerBlockSize;
-                    outerBlockSize = temp;
+                    int temp = t1BlockSize;
+                    t1BlockSize = t2BlockSize;
+                    t2BlockSize = temp;
+
+                    temp = innerPerBlock;
+                    innerPerBlock = outerPerBlock;
+                    outerPerBlock = temp;
+
                 }
                 else
                 {
-                    if (blocksInTable1 < blocksInTable2)
+                    if (t1BlockSize < t2BlockSize)
                     {
 
                         changed = true;
                         
                         inner = tempTable2;
                         outer = tempTable1;
-                        int temp = innerBlockSize;
-                        innerBlockSize = outerBlockSize;
-                        outerBlockSize = temp;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
                     }
                     else
                     {
@@ -1227,26 +1298,27 @@ namespace Project1
                 table.Columns.Add("Street", typeof(string));
                 table.Columns.Add("City", typeof(string));
 
-                MessageBox.Show("Outer block :" + outerBlockSize+"  Inner block = "+innerBlockSize);
+                //MessageBox.Show("Outer block :" + t2BlockSize+"  Inner block = "+t1BlockSize);
 
+                MessageBox.Show("Inner block size : " + t1BlockSize + "       Outer block :" + t2BlockSize);
 
-                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
-                    MessageBox.Show("MM = "+mainMemorySize+ "   "+" -------Block " + " = " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    //MessageBox.Show("MM = "+mainMemorySize+ "   "+" -------Block " + " = " + i + " to " + (i + t2BlockSize * (mainMemorySize - 1)) + "------");
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
-                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
                     }
                     lstOuter.Items.Add("___________________________");
 
-                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
-                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
@@ -1380,40 +1452,50 @@ namespace Project1
                 string[] t1 = table1.Split('_');
                 string[] t2 = table2.Split('_');
 
-                int innerBlockSize = blockSize(t1[0]);
-                int outerBlockSize = blockSize(t2[0]);
+                int t1BlockSize = blockSize(t1[0], tempTable1.Count);
+                int t2BlockSize = blockSize(t2[0], tempTable2.Count);
 
-                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
-                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+                int innerPerBlock = perBlock(t1[0]);
+                int outerPerBlock = perBlock(t2[0]);
+
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize+" blocks");
 
                 bool changed = false;
 
-                if (blocksInTable1 < mainMemorySize)
+                if (t1BlockSize < mainMemorySize)
                 {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize)
                 {
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
-                    int temp = innerBlockSize;
-                    innerBlockSize = outerBlockSize;
-                    outerBlockSize = temp;
+                    int temp = t1BlockSize;
+                    t1BlockSize = t2BlockSize;
+                    t2BlockSize = temp;
+
+                    temp = innerPerBlock;
+                    innerPerBlock = outerPerBlock;
+                    outerPerBlock = temp;
                 }
                 else
                 {
-                    if (blocksInTable1 < blocksInTable2)
+                    if (t1BlockSize < t2BlockSize)
                     {
 
                         changed = true;
 
                         inner = tempTable2;
                         outer = tempTable1;
-                        int temp = innerBlockSize;
-                        innerBlockSize = outerBlockSize;
-                        outerBlockSize = temp;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
                     }
                     else
                     {
@@ -1447,26 +1529,26 @@ namespace Project1
                 table.Columns.Add("Street", typeof(string));
                 table.Columns.Add("City", typeof(string));
 
-                MessageBox.Show("Outer block :" + outerBlockSize + "  Inner block = " + innerBlockSize);
+                //MessageBox.Show("Outer block :" + t2BlockSize + "  Inner block = " + t1BlockSize);
 
 
-                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
-                    MessageBox.Show("MM = " + mainMemorySize + "   " + " -------Block " + " = " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    //MessageBox.Show("MM = " + mainMemorySize + "   " + " -------Block " + " = " + i + " to " + (i + t2BlockSize * (mainMemorySize - 1)) + "------");
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
-                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
                     }
                     lstOuter.Items.Add("___________________________");
 
-                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
-                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
@@ -1591,7 +1673,7 @@ namespace Project1
 
             try
             {
-                MessageBox.Show("line 1 :" + table1);
+                //MessageBox.Show("line 1 :" + table1);
                 using (StreamReader sr = new StreamReader(table1))
                 {
                     while ((line = sr.ReadLine()) != null)
@@ -1600,7 +1682,7 @@ namespace Project1
                     }
                 }
 
-                MessageBox.Show("line 2 :" + table2);
+                //MessageBox.Show("line 2 :" + table2);
                 using (StreamReader sr = new StreamReader(table2))
                 {
                     while ((line = sr.ReadLine()) != null)
@@ -1612,42 +1694,50 @@ namespace Project1
                 string[] t1 = table1.Split('_');
                 string[] t2 = table2.Split('_');
 
-                int innerBlockSize = blockSize(t1[0]);
-                int outerBlockSize = blockSize(t2[0]);
+                int t1BlockSize = blockSize(t1[0], tempTable1.Count);
+                int t2BlockSize = blockSize(t2[0], tempTable2.Count);
 
-                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
-                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+                int innerPerBlock = perBlock(t1[0]);
+                int outerPerBlock = perBlock(t2[0]);
 
-                MessageBox.Show("tbl1 = " + blocksInTable1 + "    tbl2 = " + blocksInTable2);
+                MessageBox.Show("Relation 1 has " + t1BlockSize + " blocks AND  Relation 2 has " + t2BlockSize+" blocks");
 
                 bool changed = false;
 
-                if (blocksInTable1 < mainMemorySize)
+                if (t1BlockSize < mainMemorySize)
                 {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)
+                else if (t2BlockSize < mainMemorySize)
                 {
                     changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
-                    int temp = innerBlockSize;
-                    innerBlockSize = outerBlockSize;
-                    outerBlockSize = temp;
+                    int temp = t1BlockSize;
+                    t1BlockSize = t2BlockSize;
+                    t2BlockSize = temp;
+
+                    temp = innerPerBlock;
+                    innerPerBlock = outerPerBlock;
+                    outerPerBlock = temp;
                 }
                 else
                 {
-                    if (blocksInTable1 < blocksInTable2)
+                    if (t1BlockSize < t2BlockSize)
                     {
 
                         changed = true;
 
                         inner = tempTable2;
                         outer = tempTable1;
-                        int temp = innerBlockSize;
-                        innerBlockSize = outerBlockSize;
-                        outerBlockSize = temp;
+                        int temp = t1BlockSize;
+                        t1BlockSize = t2BlockSize;
+                        t2BlockSize = temp;
+
+                        temp = innerPerBlock;
+                        innerPerBlock = outerPerBlock;
+                        outerPerBlock = temp;
                     }
                     else
                     {
@@ -1680,22 +1770,22 @@ namespace Project1
                 tableA.Columns.Add("Customer_name", typeof(string));
                 tableA.Columns.Add("balance", typeof(string));
 
-                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
-                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
                     }
                     lstOuter.Items.Add("___________________________");
 
-                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
-                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
@@ -1712,7 +1802,7 @@ namespace Project1
 
                                     if (!duplMap.Contains(ii.Split(',')[0]))
                                     {
-                                        MessageBox.Show("ii ==" + ii.Split(',').Length + "   jj " +jj.Split(','));
+                                        //MessageBox.Show("ii ==" + ii.Split(',').Length + "   jj " +jj.Split(','));
                                         if (ii.Split(',').Length == 2)
                                         {
                                             duplMap.Add(jj.Split(',')[0]);
@@ -1787,7 +1877,7 @@ namespace Project1
 
             string outFileName = "Results for "+query+" ("+ DateTime.Now.ToString("MM-dd-yyyy HH-mm-ss") +").txt";
             StringBuilder strBuilder = new StringBuilder();
-            MessageBox.Show(outFileName);
+            //MessageBox.Show(outFileName);
             for (int i = 0; i < gridOut.Rows.Count; i++)
             {
                 for (int k = 0; k < gridOut.Columns.Count; k++)
@@ -2032,7 +2122,7 @@ namespace Project1
                     {
                         txtLog.Text = txtLog.Text + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
-                        MessageBox.Show("accounttttttttttttttttttttt = " + table1.site);
+                        //MessageBox.Show("accounttttttttttttttttttttt = " + table1.site);
                     }
                 }
 
@@ -2178,9 +2268,9 @@ namespace Project1
                     }
                     if (table1.table.Equals("depositor") && table2.table.Equals("account")) // working
                     {
-                        MessageBox.Show("Dep acc semi");
-                        MessageBox.Show("table 2 :" + table2.table + "  site 2:" + table2.site);
-                        MessageBox.Show("table 1 :" + table1.table + "  site 1:" + table1.site);
+                        //MessageBox.Show("Dep acc semi");
+                        //MessageBox.Show("table 2 :" + table2.table + "  site 2:" + table2.site);
+                        //MessageBox.Show("table 1 :" + table1.table + "  site 1:" + table1.site);
                         txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                         txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
                         txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
@@ -2292,8 +2382,7 @@ namespace Project1
                 }
                 txtLog.Text = txtLog.Text + Environment.NewLine + i +Environment.NewLine;
                 list.Add(i);
-            }
-            MessageBox.Show("Baaaaaaaaaaaaaaaaaaalance   == " +balanceCondition);
+            }            
             return list;
         }
 
@@ -2307,7 +2396,7 @@ namespace Project1
                     if (j > 3)
                     {
                         mainMemorySize = j;
-                        MessageBox.Show(j + "");
+                        MessageBox.Show("Available Memory size = "+j);
                     }
                     else {
                         MessageBox.Show("Memory size should be Possitive Integer grater than 3");

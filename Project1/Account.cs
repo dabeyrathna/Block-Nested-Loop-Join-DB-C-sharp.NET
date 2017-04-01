@@ -17,7 +17,8 @@ namespace Project1
         string account_number;
         string branch_name;
         string balance;
-        public static int numberOfBlock = 10;
+        public static int numberOfBlock = 6;
+        public static int tuplesPerBlock = 10;
 
         public string getAccountNumber() {
             return account_number;
