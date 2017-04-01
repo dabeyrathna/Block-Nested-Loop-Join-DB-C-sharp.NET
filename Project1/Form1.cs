@@ -299,11 +299,10 @@ namespace Project1
                 table.Columns.Add("Street", typeof(string));
                 table.Columns.Add("City", typeof(string));
 
-
                 for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add("-------Records " + "from " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
                     foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
@@ -314,14 +313,14 @@ namespace Project1
                     for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add("-------Records " + "from " + j + " to " + (j + innerPerBlock) + "------");
                         foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
                             tempBlock2.Add("" + ss2);
                         }
                         lstInner.Items.Add("___________________________");
-
+                        
                         HashSet<string> duplMap = new HashSet<string>();
                         foreach (string ii in tempBlock1)
                         {
@@ -563,7 +562,8 @@ namespace Project1
                 for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add("-------Records " + "from " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add(" ");
                     foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
@@ -574,7 +574,8 @@ namespace Project1
                     for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add("-------Records " + "from " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add(" ");
                         foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
@@ -834,7 +835,8 @@ namespace Project1
                 for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add("-------Records " + "from " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add(" ");
                     foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
@@ -846,7 +848,8 @@ namespace Project1
                     for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add("-------Records " + "from " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add(" ");
                         foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
@@ -1217,7 +1220,8 @@ namespace Project1
                 for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add("-------Records " + "from " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add(" ");
                     foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
@@ -1228,7 +1232,8 @@ namespace Project1
                     for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add("-------Records " + "from " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add(" ");
                         foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
@@ -1449,7 +1454,8 @@ namespace Project1
                 for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add("-------Records " + "from " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add(" ");
                     foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
@@ -1460,7 +1466,8 @@ namespace Project1
                     for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add("-------Records " + "from " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add(" ");
                         foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
@@ -1702,20 +1709,22 @@ namespace Project1
                 for (int i = 0; i < outer.Count(); i = i + (outerPerBlock * (mainMemorySize - 1)))
                 {
                     tempBlock1.Clear();
-                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add("-------Records " + "from " + i + " to " + (i + outerPerBlock * (mainMemorySize - 1)) + "------");
+                    lstOuter.Items.Add(" ");
                     foreach (var ss1 in outer.Skip(i).Take(outerPerBlock * (mainMemorySize - 1)))
                     {
                         lstOuter.Items.Add("" + ss1);
                         tempBlock1.Add("" + ss1);
                     }
                     lstOuter.Items.Add("___________________________");
-
+                    
 
                     //  Allocate 1 page for inner
                     for (int j = 0; j < inner.Count(); j = j + innerPerBlock)
                     {
                         tempBlock2.Clear();
-                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add("-------Records " + "from " + j + " to " + (j + innerPerBlock) + "------");
+                        lstInner.Items.Add(" ");
                         foreach (var ss2 in inner.Skip(j).Take(innerPerBlock))
                         {
                             lstInner.Items.Add("" + ss2);
