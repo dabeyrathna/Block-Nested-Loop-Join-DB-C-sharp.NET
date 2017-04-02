@@ -243,19 +243,24 @@ namespace Project1
         }
         
         public void twoWaySemijoin(RelationInfo table1, RelationInfo table2, string currentSite) {
-            txtLog.Text = txtLog.Text + Environment.NewLine;
-            txtLog.Text = txtLog.Text + "Ship table 1 key to merge, get table 2 key to min of not or ....... and return to"+currentSite;
+                      
 
             if (table1.table.Equals("depositor") && table2.table.Equals("account"))
             {
+
+                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to " + table2.site;
                 txtLog.Text = txtLog.Text + Environment.NewLine;
-                txtLog.Text = txtLog.Text + "----------------------------------" + currentSite;
+               
 
                 List<Depositor> t1 = new List<Depositor>(depositorTable);
                 List<Account> t2 = new List<Account>(accountTable);
 
                 string FileName = "depositor_NYC_HOU_Copy.txt";
-
+                txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = "+ FileName;
+                txtLog.Text = txtLog.Text + Environment.NewLine;
+                txtLog.Text = txtLog.Text + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "----------------------------------";
                 try
                 {
                     System.IO.File.Delete(FileName);
@@ -264,11 +269,13 @@ namespace Project1
                 { }
 
                 blockNestedJoinSameSite(FileName);
+
                 
                 txtLog.Text = txtLog.Text + Environment.NewLine;
-                txtLog.Text = txtLog.Text + "First join session finished" + currentSite;
+                txtLog.Text = txtLog.Text + "First join session finished";
                 txtLog.Text = txtLog.Text + Environment.NewLine;
                 txtLog.Text = txtLog.Text + "Results write to file " + Environment.NewLine;
+                txtLog.Text = txtLog.Text + Environment.NewLine;
                 txtLog.Text = txtLog.Text + FileName;
 
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(FileName, true))
@@ -288,19 +295,18 @@ namespace Project1
                     }
                 }
 
-
+                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Ship " + FileName + " to site HOU";
                 blockNestedJoin("customer_HOU.txt", FileName);
 
                 txtLog.Text = txtLog.Text + Environment.NewLine;
                 txtLog.Text = txtLog.Text + Environment.NewLine;
-                txtLog.Text = txtLog.Text + "File shiped to the site : "+cmbCurrServer.Text;
+                //txtLog.Text = txtLog.Text + "File shiped to the site : "+cmbCurrServer.Text;
                 
 
             }
             else if (table1.table.Equals("customer") && table2.table.Equals("depositor")) {
-                txtLog.Text = txtLog.Text + Environment.NewLine;
-                txtLog.Text = txtLog.Text + "----------------------------------" + currentSite;
-
+                
                 List<Depositor> t1 = new List<Depositor>(depositorTable);
                 List<Account> t2 = new List<Account>(accountTable);
 
@@ -312,8 +318,7 @@ namespace Project1
                 }
                 catch (System.IO.IOException eee)
                 { }
-
-
+                
                 semiJoinCustWithDepositor();
 
             }
@@ -321,9 +326,6 @@ namespace Project1
 
         public void blockNestedJoinBalance(string table1, string table2)
         {
-
-            MessageBox.Show("reciewd : queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
-
 
             List<string> tempTable1 = new List<string>();
             List<string> tempTable2 = new List<string>();
@@ -512,8 +514,7 @@ namespace Project1
             }
 
         }
-
-
+        
         public void semiJoinCustWithDepositor() {
             string shippingFileName = "Customer_HOU_NYC_Copy.txt";
             txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
@@ -529,9 +530,17 @@ namespace Project1
                     lstSite1.Items.Add(i.getCustName());
                 }
             }
+            
+            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+            txtLog.Text = txtLog.Text + "Customer copy recieved to NYC site";         
 
-            MessageBox.Show("Customer copy recieved to NYC site");
-            MessageBox.Show("Now Intersect customer keys with depositor keys");
+            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+            txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
+
+            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+            txtLog.Text = txtLog.Text + "Intersect customer keys with depositor keys";
+
+
             List<string> tempSite1 = new List<string>();
             try
             {
@@ -555,12 +564,13 @@ namespace Project1
                     }
                     tempsiteL1 = tempSite1.ToList<string>();
                     lstSite2.DataSource = tempsiteL1;
-                    MessageBox.Show("Intersected -------------------->");
                 }
-                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
-
+                
                 string returndFileName = "depositor_NYC_NYC_copy.txt";
+
+                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Intermediate Result saved in File :";
+                txtLog.Text = txtLog.Text + returndFileName;
 
                 try
                 {
@@ -577,7 +587,20 @@ namespace Project1
                     }
                 }
 
+                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Joining..."+Environment.NewLine + "depositor_NYC_NYC_copy " + Environment.NewLine + " With Account_NYC";
+
                 blockNestedJoinSameSiteBalance(tempSite1, "account");
+
+                txtLog.Text = txtLog.Text + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Ship Result FROM NYC to HOU";
+                txtLog.Text = txtLog.Text + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Temp file : depositor_NYC_HOU_Copy.txt";
+
+
+                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "Joining..." + Environment.NewLine + "depositor_NYC_HOU_Copy.txt" + Environment.NewLine + " customer_HOU";
+                blockNestedJoinSemiJoinPossitiveNegative("depositor_NYC_HOU_Copy.txt", "customer_HOU.txt");
 
                 //txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                 //txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
@@ -822,10 +845,11 @@ namespace Project1
                 }
 
                 lstSite1.DataSource = custPossitive.ToList<string>();
-                MessageBox.Show("Clear sites");
+                
                 if (custPossitive.Count > custNegative.Count)
                 {
                     possitiveQ4 = false;
+                    MessageBox.Show("Non matching set is exporting");
                     foreach (string ss1 in custNegative)
                     {
                         lstSite2.Items.Add(ss1);
@@ -835,13 +859,15 @@ namespace Project1
                 else
                 {
                     possitiveQ4 = true;
+                    MessageBox.Show("Matching set is exporting");
                     foreach (string ss1 in custPossitive)
                     {
                         lstSite2.Items.Add(ss1);
                         twoWaySite1.Add(ss1);
                     }
-                }
-                MessageBox.Show("------------------------------------------->");
+                }                
+                
+
             }
             catch (Exception eee)
             {
@@ -850,8 +876,32 @@ namespace Project1
             finally
             {
                 outBuffer.Clear();
-                //writeFinalResultsToFile(getQueryRadiaButtonName());
+                writeQuery4ToFile();
             }
+        }
+
+        public void writeQuery4ToFile() {
+
+            string fileName = "depositor_NYC_HOU_Copy.txt";
+
+            try
+            {
+                System.IO.File.Delete(fileName);
+            }
+            catch (System.IO.IOException eee)
+            { }
+            try
+            {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(fileName, true))
+                {
+                    foreach (string i in lstSite2.Items)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+            }
+            catch (Exception eee) { }
         }
 
         public void blockNestedJoinSameSite(string fileName)
@@ -1062,7 +1112,24 @@ namespace Project1
 
             //MessageBox.Show("reciewd :  " + table1 + " and " + table2);
 
-            
+            clearGrid();
+            try
+            {
+                lstInner.Items.Clear();
+            }
+            catch (Exception ee1)
+            {
+                lstInner.DataSource = null;
+            }
+            try
+            {
+                lstOuter.Items.Clear();
+            }
+            catch (Exception ee2)
+            {
+                lstOuter.DataSource = null;
+            }
+
             List<string> tempTable1 = new List<string>();
             List<string> tempTable2 = new List<string>();
 
@@ -1250,6 +1317,265 @@ namespace Project1
             
         }
 
+        public void blockNestedJoinSemiJoinPossitiveNegative(string table1, string table2)
+        {
+
+            //MessageBox.Show("reciewd :  " + table1 + " and " + table2);
+
+            txtLog.Text = txtLog.Text + Environment.NewLine;
+            if (possitiveQ4)
+            {
+                txtLog.Text = txtLog.Text + "Two way semi join returns with matching set...";
+            }
+            else {
+                txtLog.Text = txtLog.Text + "Two way semi join returns with non matching set...";
+            }
+            
+
+            clearGrid();
+            try
+            {
+                lstInner.Items.Clear();
+            }
+            catch (Exception ee1)
+            {
+                lstInner.DataSource = null;
+            }
+            try
+            {
+                lstOuter.Items.Clear();
+            }
+            catch (Exception ee2)
+            {
+                lstOuter.DataSource = null;
+            }
+
+            List<string> tempTable1 = new List<string>();
+            List<string> tempTable2 = new List<string>();
+
+            List<string> inner = new List<string>();
+            List<string> outer = new List<string>();
+            int mainMemorySize = this.mainMemorySize;
+
+            string line;
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(table1))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        tempTable1.Add(line);
+                    }
+                }
+
+                using (StreamReader sr = new StreamReader(table2))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        tempTable2.Add(line);
+                    }
+                }
+
+                string[] t1 = table1.Split('_');
+                string[] t2 = table2.Split('_');
+
+                int innerBlockSize = blockSize(t1[0]);
+                int outerBlockSize = blockSize(t2[0]);
+
+                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
+                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+
+                bool changed = false;
+
+                if (blocksInTable1 < mainMemorySize)
+                {
+                    inner = tempTable1;
+                    outer = tempTable2;
+                }
+                else if (blocksInTable2 < mainMemorySize)
+                {
+                    changed = true;
+                    inner = tempTable2;
+                    outer = tempTable1;
+                    int temp = innerBlockSize;
+                    innerBlockSize = outerBlockSize;
+                    outerBlockSize = temp;
+                }
+                else
+                {
+                    if (blocksInTable1 < blocksInTable2)
+                    {
+
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = innerBlockSize;
+                        innerBlockSize = outerBlockSize;
+                        outerBlockSize = temp;
+                    }
+                    else
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                }
+
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter("outer.txt", true))
+                {
+                    foreach (string i in outer)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter("inner.txt", true))
+                {
+                    foreach (string i in inner)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                List<string> tempBlock1 = new List<string>();
+                List<string> tempBlock2 = new List<string>();
+
+                DataTable table = new DataTable();
+                table.Columns.Add("Customer_name", typeof(string));
+                table.Columns.Add("Street", typeof(string));
+                table.Columns.Add("City", typeof(string));
+
+                MessageBox.Show("Outer block :" + outerBlockSize + "  Inner block = " + innerBlockSize);
+
+
+                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                {
+                    MessageBox.Show("MM = " + mainMemorySize + "   " + " -------Block " + " = " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    tempBlock1.Clear();
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    {
+                        lstOuter.Items.Add("" + ss1);
+                        tempBlock1.Add("" + ss1);
+                    }
+                    lstOuter.Items.Add("___________________________");
+
+                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    {
+                        tempBlock2.Clear();
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        {
+                            lstInner.Items.Add("" + ss2);
+                            tempBlock2.Add("" + ss2);
+                        }
+                        lstInner.Items.Add("___________________________");
+
+                        HashSet<string> duplMap = new HashSet<string>();
+                        foreach (string ii in tempBlock1)
+                        {
+                            foreach (string jj in tempBlock2)
+                            {
+                                if (possitiveQ4) {
+                                    if (ii.Split(',')[0].Equals(jj.Split(',')[0]))
+                                    {
+                                        if (!duplMap.Contains(ii.Split(',')[0]))
+                                        {
+                                            if (jj.Split(',').Length == 3)
+                                            {
+                                                duplMap.Add(jj.Split(',')[0]);
+                                                lstOutBuffer.Items.Add(jj);
+                                                outBuffer.Add(jj);
+                                            }
+                                            else
+                                            {
+                                                duplMap.Add(ii.Split(',')[0]);
+                                                lstOutBuffer.Items.Add(ii);
+                                                outBuffer.Add(ii);
+                                            }
+
+                                        }
+                                        if (lstOutBuffer.Items.Count > 4)
+                                        {
+                                            MessageBox.Show("Out Buffer is Full : Flushing...");
+
+                                            for (int kk = 0; kk < 5; kk++)
+                                            {
+                                                string[] row2 = new string[] { outBuffer[kk].Split(',')[0], outBuffer[kk].Split(',')[1], outBuffer[kk].Split(',')[2] };
+                                                table.Rows.Add(row2);
+                                                gridOut.DataSource = table;
+
+                                            }
+                                            outBuffer.Clear();
+                                            lstOutBuffer.Items.Clear();
+                                        }
+                                    }
+                                }
+                                else {
+                                    if (!ii.Split(',')[0].Equals(jj.Split(',')[0]))
+                                    {
+                                        if (!duplMap.Contains(ii.Split(',')[0]))
+                                        {
+                                            if (jj.Split(',').Length == 3)
+                                            {
+                                                duplMap.Add(jj.Split(',')[0]);
+                                                lstOutBuffer.Items.Add(jj);
+                                                outBuffer.Add(jj);
+                                            }
+                                            else
+                                            {
+                                                duplMap.Add(ii.Split(',')[0]);
+                                                lstOutBuffer.Items.Add(ii);
+                                                outBuffer.Add(ii);
+                                            }
+
+                                        }
+                                        if (lstOutBuffer.Items.Count > 4)
+                                        {
+                                            MessageBox.Show("Out Buffer is Full : Flushing...");
+
+                                            for (int kk = 0; kk < 5; kk++)
+                                            {
+                                                string[] row2 = new string[] { outBuffer[kk].Split(',')[0], outBuffer[kk].Split(',')[1], outBuffer[kk].Split(',')[2] };
+                                                table.Rows.Add(row2);
+                                                gridOut.DataSource = table;
+
+                                            }
+                                            outBuffer.Clear();
+                                            lstOutBuffer.Items.Clear();
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }
+                    }
+                    if (outBuffer.Count > 0)
+                    {
+                        foreach (string restBuff in outBuffer)
+                        {
+                            string[] row3 = new string[] { restBuff.Split(',')[0], restBuff.Split(',')[1], restBuff.Split(',')[2] };
+                            table.Rows.Add(row3);
+                            gridOut.DataSource = table;
+                            lstOutBuffer.Items.Clear();
+                        }
+                    }
+                }
+            }
+            catch (Exception eee)
+            {
+                MessageBox.Show("File not found \n\n" + eee.ToString());
+            }
+            finally
+            {
+                outBuffer.Clear();
+                writeFinalResultsToFile(getQueryRadiaButtonName());
+            }
+
+        }
+
         public void blockNestedJoinAccount(string table1, string table2)              
         {
 
@@ -1390,14 +1716,14 @@ namespace Project1
                                         if (ii.Split(',').Length == 2)
                                         {
                                             duplMap.Add(jj.Split(',')[0]);
-                                            lstOutBuffer.Items.Add(jj);
-                                            outBuffer.Add(jj);
+                                            lstOutBuffer.Items.Add(ii.Split(',')[1] + "," + jj.Split(',')[2]);
+                                            outBuffer.Add(ii.Split(',')[1] + "," + jj.Split(',')[2]);
                                         }
                                         else
                                         {
                                             duplMap.Add(ii.Split(',')[0]);
-                                            lstOutBuffer.Items.Add(ii);
-                                            outBuffer.Add(ii);
+                                            lstOutBuffer.Items.Add(jj.Split(',')[1]+","+ ii.Split(',')[2]);
+                                            outBuffer.Add(jj.Split(',')[1] + "," + ii.Split(',')[2]);
                                         }
                                     }
                                     if (lstOutBuffer.Items.Count > 4)
@@ -1486,7 +1812,7 @@ namespace Project1
                 file.WriteLine(strBuilder);
             }
 
-            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine + Environment.NewLine +
+            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine +
                                         "Final result write to permanent storage"+ Environment.NewLine + 
                                         "File name : " + Environment.NewLine + outFileName;
 
@@ -1494,14 +1820,12 @@ namespace Project1
         
         public void semiJoin(RelationInfo table1, RelationInfo table2) {
 
-            MessageBox.Show("tabl 1: "+table1.table+"     tbl2 = "+table2.table);
-
             string shippingFileName = "";
             string returndFileName = "";
 
             if (query4)
-            {
-                MessageBox.Show("t1 : "+table1.table+"    t2 : "+table2.table);
+            {               
+                List<string> tempsiteL1 = new List<string>();
                 twoWaySemijoin(table1, table2, cmbCurrServer.Text);
             }
             else
@@ -1689,6 +2013,8 @@ namespace Project1
 
                             txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                             txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+
+                            
                             blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
                         }
                         catch (Exception eee)
@@ -1905,7 +2231,7 @@ namespace Project1
                             txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
                             txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
 
-
+                            
                             blockNestedJoinAccount(table2.table + "_" + table2.site + ".txt", returndFileName);
                         }
                         catch (Exception eee)
@@ -1971,13 +2297,12 @@ namespace Project1
             return list;
         }
 
-
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
                 int j=2;
-                if (Int32.TryParse(txtMemorySize.Text.ToString(), out j))/********************************* todo *************************/
+                if (Int32.TryParse(txtMemorySize.Text.ToString(), out j))
                 {                     
                     if (j > 3)
                     {
