@@ -23,6 +23,8 @@ namespace Project1
             txtSelect.Text = "customer_name, street, city";
             txtxFrom.Text = "customer, depositor";
             txtWhere.Text = "customer.customer_name = depositor.customer_name";
+            txtMemorySize.Text = 5 + "";
+            this.query4 = false;
         }
 
         List<Account> accountTable;
@@ -31,6 +33,10 @@ namespace Project1
         List<Customer> customerTable;
 
         List<RelationInfo> tableSet = new List<RelationInfo>();
+        int mainMemorySize = 5;
+        double balanceCondition = 0;
+        bool query4 = false;
+        bool possitiveQ4 = true;
 
         public string[] tables = {"branch", "account","depositor", "customer"};
         List<string> twoWaySite1 = new List<string>();
@@ -247,7 +253,7 @@ namespace Project1
 
                 List<Depositor> t1 = new List<Depositor>(depositorTable);
                 List<Account> t2 = new List<Account>(accountTable);
-                
+
                 string FileName = "depositor_NYC_HOU_Copy.txt";
 
                 try
@@ -258,7 +264,7 @@ namespace Project1
                 { }
 
                 blockNestedJoinSameSite(FileName);
-
+                
                 txtLog.Text = txtLog.Text + Environment.NewLine;
                 txtLog.Text = txtLog.Text + "First join session finished" + currentSite;
                 txtLog.Text = txtLog.Text + Environment.NewLine;
@@ -282,11 +288,569 @@ namespace Project1
                     }
                 }
 
-                blockNestedJoin("customer_HOU.txt",FileName);
+
+                blockNestedJoin("customer_HOU.txt", FileName);
 
                 txtLog.Text = txtLog.Text + Environment.NewLine;
                 txtLog.Text = txtLog.Text + Environment.NewLine;
-                txtLog.Text = txtLog.Text + "File transferd to the site :"+cmbCurrServer.Text;
+                txtLog.Text = txtLog.Text + "File shiped to the site : "+cmbCurrServer.Text;
+                
+
+            }
+            else if (table1.table.Equals("customer") && table2.table.Equals("depositor")) {
+                txtLog.Text = txtLog.Text + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "----------------------------------" + currentSite;
+
+                List<Depositor> t1 = new List<Depositor>(depositorTable);
+                List<Account> t2 = new List<Account>(accountTable);
+
+                string FileName = "customer_HOU_NYC_Copy.txt";
+
+                try
+                {
+                    System.IO.File.Delete(FileName);
+                }
+                catch (System.IO.IOException eee)
+                { }
+
+
+                semiJoinCustWithDepositor();
+
+            }
+        }
+
+        public void blockNestedJoinBalance(string table1, string table2)
+        {
+
+            MessageBox.Show("reciewd : queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+
+
+            List<string> tempTable1 = new List<string>();
+            List<string> tempTable2 = new List<string>();
+
+            List<string> inner = new List<string>();
+            List<string> outer = new List<string>();
+            int mainMemorySize = this.mainMemorySize;
+
+            string line;
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(table1))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        tempTable1.Add(line);
+                    }
+                }
+
+                using (StreamReader sr = new StreamReader(table2))
+                {
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        tempTable2.Add(line);
+                    }
+                }
+
+                string[] t1 = table1.Split('_');
+                string[] t2 = table2.Split('_');
+
+                int innerBlockSize = blockSize(t1[0]);
+                int outerBlockSize = blockSize(t2[0]);
+
+                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
+                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+
+                bool changed = false;
+
+                if (blocksInTable1 < mainMemorySize)
+                {
+                    inner = tempTable1;
+                    outer = tempTable2;
+                }
+                else if (blocksInTable2 < mainMemorySize)
+                {
+                    changed = true;
+                    inner = tempTable2;
+                    outer = tempTable1;
+                    int temp = innerBlockSize;
+                    innerBlockSize = outerBlockSize;
+                    outerBlockSize = temp;
+                }
+                else
+                {
+                    if (blocksInTable1 < blocksInTable2)
+                    {
+
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = innerBlockSize;
+                        innerBlockSize = outerBlockSize;
+                        outerBlockSize = temp;
+                    }
+                    else
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                }
+
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter("outer.txt", true))
+                {
+                    foreach (string i in outer)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter("inner.txt", true))
+                {
+                    foreach (string i in inner)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                List<string> tempBlock1 = new List<string>();
+                List<string> tempBlock2 = new List<string>();
+
+                DataTable table = new DataTable();
+                table.Columns.Add("Customer_name", typeof(string));
+                table.Columns.Add("Street", typeof(string));
+                table.Columns.Add("City", typeof(string));
+
+                MessageBox.Show("Outer block :" + outerBlockSize + "  Inner block = " + innerBlockSize);
+
+
+                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                {
+                    MessageBox.Show("MM = " + mainMemorySize + "   " + " -------Block " + " = " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    tempBlock1.Clear();
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    {
+                        lstOuter.Items.Add("" + ss1);
+                        tempBlock1.Add("" + ss1);
+                    }
+                    lstOuter.Items.Add("___________________________");
+
+                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    {
+                        tempBlock2.Clear();
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        {
+                            lstInner.Items.Add("" + ss2);
+                            tempBlock2.Add("" + ss2);
+                        }
+                        lstInner.Items.Add("___________________________");
+
+                        HashSet<string> duplMap = new HashSet<string>();
+                        foreach (string ii in tempBlock1)
+                        {
+                            foreach (string jj in tempBlock2)
+                            {
+                                if (ii.Split(',')[0].Equals(jj.Split(',')[0]))
+                                {
+                                    if (!duplMap.Contains(ii.Split(',')[0]))
+                                    {
+                                        if (jj.Split(',').Length == 3)
+                                        {
+                                            duplMap.Add(jj.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(jj);
+                                            outBuffer.Add(jj);
+                                        }
+                                        else
+                                        {
+                                            duplMap.Add(ii.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(ii);
+                                            outBuffer.Add(ii);
+                                        }
+
+                                    }
+                                    if (lstOutBuffer.Items.Count > 4)
+                                    {
+                                        MessageBox.Show("Out Buffer is Full : Flushing...");
+
+                                        for (int kk = 0; kk < 5; kk++)
+                                        {
+                                            string[] row2 = new string[] { outBuffer[kk].Split(',')[0], outBuffer[kk].Split(',')[1], outBuffer[kk].Split(',')[2] };
+                                            table.Rows.Add(row2);
+                                            gridOut.DataSource = table;
+
+                                        }
+                                        outBuffer.Clear();
+                                        lstOutBuffer.Items.Clear();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (outBuffer.Count > 0)
+                    {
+                        foreach (string restBuff in outBuffer)
+                        {
+                            string[] row3 = new string[] { restBuff.Split(',')[0], restBuff.Split(',')[1], restBuff.Split(',')[2] };
+                            table.Rows.Add(row3);
+                            gridOut.DataSource = table;
+                            lstOutBuffer.Items.Clear();
+                        }
+                    }
+                }
+            }
+            catch (Exception eee)
+            {
+                MessageBox.Show("File not found \n\n" + eee.ToString());
+            }
+            finally
+            {
+                outBuffer.Clear();
+                writeFinalResultsToFile(getQueryRadiaButtonName());
+            }
+
+        }
+
+
+        public void semiJoinCustWithDepositor() {
+            string shippingFileName = "Customer_HOU_NYC_Copy.txt";
+            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+            txtLog.Text = txtLog.Text + "Ship Customer_key to site NYC";
+            txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = "+ shippingFileName;
+            List<string> tempsiteL1 = new List<string>();
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+            {
+                foreach (Customer i in customerTable)
+                {
+                    file.WriteLine(i.getCustName());
+                    lstSite1.Items.Add(i.getCustName());
+                }
+            }
+
+            MessageBox.Show("Customer copy recieved to NYC site");
+            MessageBox.Show("Now Intersect customer keys with depositor keys");
+            List<string> tempSite1 = new List<string>();
+            try
+            {
+                HashSet<Depositor> depList = new HashSet<Depositor>();
+                using (StreamReader sr = new StreamReader(shippingFileName))
+                {
+                    string line;
+                    
+
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        foreach (Depositor i in depositorTable)
+                        {
+                            if (line.Equals(i.getKey1()))
+                            {
+                                tempSite1.Add(i.getKey2() +","+ line);
+                                depList.Add(i);
+                                break;
+                            }
+                        }
+                    }
+                    tempsiteL1 = tempSite1.ToList<string>();
+                    lstSite2.DataSource = tempsiteL1;
+                    MessageBox.Show("Intersected -------------------->");
+                }
+                txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
+
+                string returndFileName = "depositor_NYC_NYC_copy.txt";
+
+                try
+                {
+                    System.IO.File.Delete(returndFileName);
+                }
+                catch (System.IO.IOException eee)
+                { }
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                {
+                    foreach (string i in tempsiteL1)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                blockNestedJoinSameSiteBalance(tempSite1, "account");
+
+                //txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                //txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+                //blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
+            }
+            catch (Exception eee)
+            {
+                MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+            }            
+        }
+
+        public void blockNestedJoinSameSiteBalance(List<string> dipList, string table2)
+        {
+
+            //MessageBox.Show("reciewd :  " + table1 + " and " + table2);
+            List<string> tempTable1 = new List<string>();
+            List<string> tempTable2 = new List<string>();
+
+            List<string> inner = new List<string>();
+            List<string> outer = new List<string>();
+            int mainMemorySize = this.mainMemorySize;
+
+            string line;
+
+            try
+            {
+
+                foreach (string d in dipList)
+                {
+                    tempTable1.Add(d);
+                }
+
+                foreach (Account a in accountTable)
+                {
+                    tempTable2.Add(a.getAccountNumber() + "," + a.getBranchName() + "," + a.getBalance());
+                }
+
+
+                int innerBlockSize = blockSize("depositor");
+                int outerBlockSize = blockSize("account");
+
+                int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
+                int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
+
+                bool changed = false;
+
+                if (blocksInTable1 < mainMemorySize)
+                {
+                    inner = tempTable1;
+                    outer = tempTable2;
+                }
+                else if (blocksInTable2 < mainMemorySize)
+                {
+                    changed = true;
+                    inner = tempTable2;
+                    outer = tempTable1;
+                    int temp = innerBlockSize;
+                    innerBlockSize = outerBlockSize;
+                    outerBlockSize = temp;
+                }
+                else
+                {
+                    if (blocksInTable1 < blocksInTable2)
+                    {
+
+                        changed = true;
+
+                        inner = tempTable2;
+                        outer = tempTable1;
+                        int temp = innerBlockSize;
+                        innerBlockSize = outerBlockSize;
+                        outerBlockSize = temp;
+                    }
+                    else
+                    {
+                        inner = tempTable1;
+                        outer = tempTable2;
+                    }
+                }
+
+                try
+                {
+                    System.IO.File.Delete("outer.txt"); 
+                    System.IO.File.Delete("inner.txt");
+                }
+                catch (System.IO.IOException eee)
+                { }
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter("outer.txt", true))
+                {
+                    foreach (string i in outer)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter("inner.txt", true))
+                {
+                    foreach (string i in inner)
+                    {
+                        file.WriteLine(i);
+                    }
+                }
+
+                List<string> tempBlock1 = new List<string>();
+                List<string> tempBlock2 = new List<string>();
+                HashSet<string> custPossitive = new HashSet<string>();
+                HashSet<string> custNegative = new HashSet<string>();
+                DataTable table = new DataTable();
+                table.Columns.Add("Customer_name", typeof(string));
+                table.Columns.Add("Accunt_Number", typeof(string));
+                table.Columns.Add("Balance", typeof(string));
+                string fromSite1 = "";
+
+                for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
+                {
+                    tempBlock1.Clear();
+                    lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
+                    foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
+                    {
+                        lstOuter.Items.Add("" + ss1);
+                        tempBlock1.Add("" + ss1);
+                    }
+                    lstOuter.Items.Add("___________________________");
+                    HashSet<string> duplMap = new HashSet<string>();
+                    
+                    for (int j = 0; j < inner.Count(); j = j + innerBlockSize)
+                    {
+                        tempBlock2.Clear();
+                        lstInner.Items.Add("-------Block " + "= " + j + " to " + (j + innerBlockSize) + "------");
+                        foreach (var ss2 in inner.Skip(j).Take(innerBlockSize))
+                        {
+                            lstInner.Items.Add("" + ss2);
+                            tempBlock2.Add("" + ss2);
+                        }
+                        lstInner.Items.Add("___________________________");
+
+                        
+                        foreach (string ii in tempBlock1)
+                        {
+                            foreach (string jj in tempBlock2)
+                            {
+                                if (ii.Split(',')[0].Equals(jj.Split(',')[0]))
+                                {
+                                    if (!duplMap.Contains(ii.Split(',')[0]))
+                                    {
+                                        if (changed)
+                                        {
+                                            double amount;
+                                            if (Double.TryParse(jj.Split(',')[2], out amount)) {
+                                                if (amount > balanceCondition)
+                                                {
+                                                    duplMap.Add(jj.Split(',')[0]);
+                                                    lstOutBuffer.Items.Add(jj.Split(',')[0] + "," + ii.Split(',')[1] + "," + jj.Split(',')[2]);
+                                                    outBuffer.Add(jj.Split(',')[0] + "," + ii.Split(',')[1] + "," + jj.Split(',')[2]);
+                                                    custPossitive.Add(ii.Split(',')[1]);
+                                                }
+                                                else {
+                                                    custNegative.Add(ii.Split(',')[1]);
+                                                }                                            
+                                            }                                            
+                                        }
+                                        else
+                                        {
+                                            double amount;
+                                            if (Double.TryParse(ii.Split(',')[2], out amount))
+                                            {
+                                                if (amount > balanceCondition)
+                                                {
+                                                    duplMap.Add(ii.Split(',')[0]);
+                                                    lstOutBuffer.Items.Add(ii.Split(',')[0] + "," + jj.Split(',')[1] + "," + ii.Split(',')[2]);
+                                                    outBuffer.Add(ii.Split(',')[0] + "," + jj.Split(',')[1] + "," + ii.Split(',')[2]);
+                                                    custPossitive.Add(jj.Split(',')[1]);
+                                                }
+                                                else {
+                                                    custNegative.Add(jj.Split(',')[1]);
+                                                }
+                                            }                                            
+                                        }
+                                    }
+                                    
+                                    if (lstOutBuffer.Items.Count > 4)
+                                    {
+                                        MessageBox.Show("Out Buffer is Full : Flushing...");
+                                        for (int kk = 0; kk < 5; kk++)
+                                        {
+                                            string[] row2 = new string[] { outBuffer[kk].Split(',')[0], outBuffer[kk].Split(',')[1], outBuffer[kk].Split(',')[2] };
+                                            table.Rows.Add(row2);
+                                            gridOut.DataSource = table;
+                                        }
+                                        outBuffer.Clear();
+                                        lstOutBuffer.Items.Clear();
+                                    }
+                                }                                
+                            }
+                        }                        
+                    }                                       
+                }
+                if (outBuffer.Count > 0)
+                {
+                    foreach (string restBuff in outBuffer)
+                    {
+                        string[] row3 = new string[] { restBuff.Split(',')[0], restBuff.Split(',')[1], restBuff.Split(',')[2] };
+                        table.Rows.Add(row3);
+                        gridOut.DataSource = table;
+                        lstOutBuffer.Items.Clear();
+                    }
+                }
+
+                try
+                {
+                    lstSite1.Items.Clear();
+
+                }
+                catch (Exception ee1)
+                {
+                    lstSite1.DataSource = null;
+                }
+                try
+                {
+                    lstSite2.Items.Clear();
+                }
+                catch (Exception ee2)
+                {
+                    lstSite2.DataSource = null;
+                }
+                try
+                {
+                    lstInner.Items.Clear();
+                }
+                catch (Exception ee1)
+                {
+                    lstInner.DataSource = null;
+                }
+                try
+                {
+                    lstOuter.Items.Clear();
+                }
+                catch (Exception ee2)
+                {
+                    lstOuter.DataSource = null;
+                }
+
+                lstSite1.DataSource = custPossitive.ToList<string>();
+                MessageBox.Show("Clear sites");
+                if (custPossitive.Count > custNegative.Count)
+                {
+                    possitiveQ4 = false;
+                    foreach (string ss1 in custNegative)
+                    {
+                        lstSite2.Items.Add(ss1);
+                        twoWaySite1.Add(ss1);
+                    }
+                }
+                else
+                {
+                    possitiveQ4 = true;
+                    foreach (string ss1 in custPossitive)
+                    {
+                        lstSite2.Items.Add(ss1);
+                        twoWaySite1.Add(ss1);
+                    }
+                }
+                MessageBox.Show("------------------------------------------->");
+            }
+            catch (Exception eee)
+            {
+                MessageBox.Show("File not found \n\n" + eee.ToString());
+            }
+            finally
+            {
+                outBuffer.Clear();
+                //writeFinalResultsToFile(getQueryRadiaButtonName());
             }
         }
 
@@ -299,7 +863,7 @@ namespace Project1
 
             List<string> inner = new List<string>();
             List<string> outer = new List<string>();
-            int mainMemorySize = 5;
+            int mainMemorySize = this.mainMemorySize;
 
             string line;
 
@@ -321,6 +885,8 @@ namespace Project1
                 int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
                 int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
 
+                bool changed = false;
+
                 if (blocksInTable1 < mainMemorySize)
                 {
                     inner = tempTable1;
@@ -328,6 +894,7 @@ namespace Project1
                 }
                 else if (blocksInTable2 < mainMemorySize)
                 {
+                    changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
                     int temp = innerBlockSize;
@@ -338,6 +905,9 @@ namespace Project1
                 {
                     if (blocksInTable1 < blocksInTable2)
                     {
+
+                        changed = true;
+
                         inner = tempTable2;
                         outer = tempTable1;
                         int temp = innerBlockSize;
@@ -408,9 +978,18 @@ namespace Project1
                                 {
                                     if (!duplMap.Contains(ii.Split(',')[0]))
                                     {
-                                        duplMap.Add(ii.Split(',')[0]);
-                                        lstOutBuffer.Items.Add(jj);
-                                        outBuffer.Add(jj);
+                                        if (changed)
+                                        {
+                                            duplMap.Add(jj.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(jj);
+                                            outBuffer.Add(jj);
+                                        }
+                                        else
+                                        {
+                                            duplMap.Add(ii.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(ii);
+                                            outBuffer.Add(ii);
+                                        }
                                     }
                                     if (lstOutBuffer.Items.Count > 4)
                                     {
@@ -489,7 +1068,7 @@ namespace Project1
 
             List<string> inner = new List<string>();
             List<string> outer = new List<string>();
-            int mainMemorySize = 5;
+            int mainMemorySize = this.mainMemorySize;
 
             string line;
 
@@ -520,6 +1099,8 @@ namespace Project1
                 int blocksInTable1 = (int)Math.Ceiling((double)tempTable1.Count() / innerBlockSize);
                 int blocksInTable2 = (int)Math.Ceiling((double)tempTable2.Count() / outerBlockSize);
 
+                bool changed = false;
+
                 if (blocksInTable1 < mainMemorySize)
                 {
                     inner = tempTable1;
@@ -527,6 +1108,7 @@ namespace Project1
                 }
                 else if (blocksInTable2 < mainMemorySize)
                 {
+                    changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
                     int temp = innerBlockSize;
@@ -537,6 +1119,9 @@ namespace Project1
                 {
                     if (blocksInTable1 < blocksInTable2)
                     {
+
+                        changed = true;
+                        
                         inner = tempTable2;
                         outer = tempTable1;
                         int temp = innerBlockSize;
@@ -575,8 +1160,12 @@ namespace Project1
                 table.Columns.Add("Street", typeof(string));
                 table.Columns.Add("City", typeof(string));
 
+                MessageBox.Show("Outer block :" + outerBlockSize+"  Inner block = "+innerBlockSize);
+
+
                 for (int i = 0; i < outer.Count(); i = i + (outerBlockSize * (mainMemorySize - 1)))
                 {
+                    MessageBox.Show("MM = "+mainMemorySize+ "   "+" -------Block " + " = " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
                     tempBlock1.Clear();
                     lstOuter.Items.Add("-------Block " + "= " + i + " to " + (i + outerBlockSize * (mainMemorySize - 1)) + "------");
                     foreach (var ss1 in outer.Skip(i).Take(outerBlockSize * (mainMemorySize - 1)))
@@ -606,18 +1195,29 @@ namespace Project1
                                 {
                                     if (!duplMap.Contains(ii.Split(',')[0]))
                                     {
-                                        duplMap.Add(ii.Split(',')[0]);
-                                        lstOutBuffer.Items.Add(ii);
-                                        outBuffer.Add(ii);
+                                        if (jj.Split(',').Length == 3)
+                                        {
+                                            duplMap.Add(jj.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(jj);
+                                            outBuffer.Add(jj);
+                                        }
+                                        else {
+                                            duplMap.Add(ii.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(ii);
+                                            outBuffer.Add(ii);
+                                        }
+                                        
                                     }
                                     if (lstOutBuffer.Items.Count > 4)
                                     {
                                         MessageBox.Show("Out Buffer is Full : Flushing...");
-                                        for (int kk = 0; kk < 5; kk++)
+
+                                        for (int kk = 0; kk < 5 ; kk++)
                                         {
                                             string[] row2 = new string[] { outBuffer[kk].Split(',')[0], outBuffer[kk].Split(',')[1], outBuffer[kk].Split(',')[2] };
                                             table.Rows.Add(row2);
                                             gridOut.DataSource = table;
+                                            
                                         }
                                         outBuffer.Clear();
                                         lstOutBuffer.Items.Clear();
@@ -659,7 +1259,7 @@ namespace Project1
 
             List<string> inner = new List<string>();
             List<string> outer = new List<string>();
-            int mainMemorySize = 5;
+            int mainMemorySize = this.mainMemorySize;
 
             string line;
 
@@ -694,23 +1294,29 @@ namespace Project1
 
                 MessageBox.Show("tbl1 = " + blocksInTable1 + "    tbl2 = " + blocksInTable2);
 
-                if (blocksInTable1 < mainMemorySize)    // Smaller table fits to main memory
-                {                                       // Then smaller relation to Inner
+                bool changed = false;
+
+                if (blocksInTable1 < mainMemorySize)
+                {
                     inner = tempTable1;
                     outer = tempTable2;
                 }
-                else if (blocksInTable2 < mainMemorySize)// Smaller table fits to main memory
-                {                                          // Then smaller relation to Inner
+                else if (blocksInTable2 < mainMemorySize)
+                {
+                    changed = true;
                     inner = tempTable2;
                     outer = tempTable1;
                     int temp = innerBlockSize;
                     innerBlockSize = outerBlockSize;
                     outerBlockSize = temp;
                 }
-                else                                    // Both not fit in to mian memory
+                else
                 {
-                    if (blocksInTable1 < blocksInTable2)// Lager relation to inner
+                    if (blocksInTable1 < blocksInTable2)
                     {
+
+                        changed = true;
+
                         inner = tempTable2;
                         outer = tempTable1;
                         int temp = innerBlockSize;
@@ -780,9 +1386,19 @@ namespace Project1
 
                                     if (!duplMap.Contains(ii.Split(',')[0]))
                                     {
-                                        duplMap.Add(ii.Split(',')[0]);
-                                        lstOutBuffer.Items.Add(ii.Split(',')[1] + "," + jj.Split(',')[2]);
-                                        outBuffer.Add(ii.Split(',')[1] + "," + jj.Split(',')[2]);
+                                        MessageBox.Show("ii ==" + ii.Split(',').Length + "   jj " +jj.Split(','));
+                                        if (ii.Split(',').Length == 2)
+                                        {
+                                            duplMap.Add(jj.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(jj);
+                                            outBuffer.Add(jj);
+                                        }
+                                        else
+                                        {
+                                            duplMap.Add(ii.Split(',')[0]);
+                                            lstOutBuffer.Items.Add(ii);
+                                            outBuffer.Add(ii);
+                                        }
                                     }
                                     if (lstOutBuffer.Items.Count > 4)
                                     {
@@ -877,428 +1493,442 @@ namespace Project1
         }
         
         public void semiJoin(RelationInfo table1, RelationInfo table2) {
-            
+
+            MessageBox.Show("tabl 1: "+table1.table+"     tbl2 = "+table2.table);
+
             string shippingFileName = "";
             string returndFileName = "";
-            if (table1.site.Equals(cmbCurrServer.Text))
+
+            if (query4)
             {
-                
-                shippingFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
-                returndFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
-
-                try
-                {
-                    System.IO.File.Delete(shippingFileName);
-                    System.IO.File.Delete(returndFileName);
-                }
-                catch (System.IO.IOException eee)
-                {}
-
-                if (table1.table.Equals("customer") && table2.table.Equals("depositor"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-                    List<string> tempsiteL1 = new List<string>();
-
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Customer i in customerTable) {
-                            file.WriteLine(i.getCustName());
-                            lstSite1.Items.Add(i.getCustName());
-                        }
-                    }
-
-                    try
-                    {
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-                            List<string> tempSite1 = new List<string>();
-
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                foreach (Depositor i in depositorTable)
-                                {
-                                    if (line.Equals(i.getKey1()))
-                                    {
-                                        tempSite1.Add(line);
-                                        break;
-                                    }
-                                }
-                            }
-                            tempsiteL1 = tempSite1.ToList<string>();
-                            lstSite2.DataSource = tempsiteL1;
-
-                        }
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
-
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
-                        {
-                            foreach (string i in tempsiteL1)
-                            {
-                                file.WriteLine(i);
-                            }
-                        }
-
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;                        
-                        blockNestedJoin(table1.table+"_"+table1.site+".txt",returndFileName);
-                    }
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-                }
-                if (table1.table.Equals("depositor") && table2.table.Equals("customer"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-                    List<string> tempsiteL1 = new List<string>();
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Depositor i in depositorTable)
-                        {
-                            file.WriteLine(i.getKey1());
-                            lstSite1.Items.Add(i.getKey1());
-                        }
-                    }
-
-                    try
-                    {
-                        HashSet<string> tempSite2 = new HashSet<string>();
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-                            
-
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                foreach (Customer i in customerTable)
-                                {
-                                    if (line.Equals(i.getCustName()))
-                                    {
-                                        tempSite2.Add(i.getCustName()+","+i.getStreet()+","+i.getCity());
-                                        break;
-                                    }
-                                }
-                            }
-                            tempsiteL1 = tempSite2.ToList<string>();
-                            lstSite2.DataSource = tempsiteL1;
-
-                        }
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
-
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
-                        {
-                            foreach (string i in tempSite2)
-                            {
-                                file.WriteLine(i);
-                            }
-                        }
-
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-                        blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
-                    }
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-                    
-                }
-                if (table1.table.Equals("depositor") && table2.table.Equals("account"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-                    List<string> tempsiteL1 = new List<string>();
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Depositor i in depositorTable)
-                        {
-                            file.WriteLine(i.getKey1());
-                            lstSite1.Items.Add(i.getKey1());
-                        }
-                    }
-
-                    try
-                    {
-                        HashSet<string> tempSite2 = new HashSet<string>();
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-
-
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                foreach (Customer i in customerTable)
-                                {
-                                    if (line.Equals(i.getCustName()))
-                                    {
-                                        tempSite2.Add(i.getCustName() + "," + i.getStreet() + "," + i.getCity());
-                                        break;
-                                    }
-                                }
-                            }
-                            tempsiteL1 = tempSite2.ToList<string>();
-                            lstSite2.DataSource = tempsiteL1;
-
-                        }
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
-
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
-                        {
-                            foreach (string i in tempSite2)
-                            {
-                                file.WriteLine(i);
-                            }
-                        }
-
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-                        blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
-                    }
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-
-                }
-                if (table2.table.Equals("branch"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
-                }
-                if (table2.table.Equals("account"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
-                    MessageBox.Show("accounttttttttttttttttttttt = "+table1.site);
-                }
-            }
-
-////////////////////////////////////////////////////////////////
-
-            else if (table2.site.Equals(cmbCurrServer.Text))
-            {
-                
-                shippingFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
-                returndFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
-                try
-                {
-                    System.IO.File.Delete(shippingFileName);
-                    System.IO.File.Delete(returndFileName);
-                }
-                catch (System.IO.IOException eee)
-                {
-                    MessageBox.Show("File not found depositor  \n\n" + eee.ToString());
-                }
-
-                if (table2.table.Equals("customer") && table1.table.Equals("depositor"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-                    List<string> tempsiteL1 = new List<string>();
-
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Customer i in customerTable)
-                        {
-                            file.WriteLine(i.getCustName());
-                            lstSite1.Items.Add(i.getCustName());
-                        }
-                    }
-
-                    try
-                    {
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-                            HashSet<string> tempSite1 = new HashSet<string>();
-
-
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                foreach (Depositor i in depositorTable)
-                                {
-                                    if (line.Equals(i.getKey1()))
-                                    {
-                                        tempSite1.Add(line);
-                                        break;
-                                    }
-                                }
-                            }
-                            tempsiteL1 = tempSite1.ToList<string>();
-                            lstSite2.DataSource = tempsiteL1;
-
-                        }
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
-
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
-                        {
-                            foreach (string i in tempsiteL1)
-                            {
-                                file.WriteLine(i);
-                            }
-                        }
-
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-                        blockNestedJoin(table2.table + "_" + table2.site + ".txt", returndFileName);
-                    }
-
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-
-                }
-                if (table1.table.Equals("customer") && table2.table.Equals("depositor"))
-                {
-                    //MessageBox.Show("starting depos site 2 ----------------------------");
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + " Ship " + table2.table + " key to site " + table1.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-                    List<string> tempsiteL1 = new List<string>();
-
-
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Depositor i in depositorTable)
-                        {
-                            file.WriteLine(i.getKey1());
-                            lstSite1.Items.Add(i.getKey1());
-                        }
-                    }
-
-                    try
-                    {
-                        HashSet<string> tempSite2 = new HashSet<string>();
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-                            
-                            while ((line = sr.ReadLine()) != null)
-                            {                                
-                                foreach (Customer i in customerTable)
-                                {
-                                    if (line.Equals(i.getCustName()))
-                                    {
-                                        tempSite2.Add(i.getCustName() + "," + i.getStreet() + "," + i.getCity());
-                                        break;
-                                    }                           
-                                }
-                            }
-                            
-                            tempsiteL1 = tempSite2.ToList<string>();
-                            lstSite2.DataSource = tempsiteL1;
-                        }
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "shiped to site 2 : "+ shippingFileName;
-
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
-                        {
-                            foreach (string i in tempSite2)
-                            {
-                                file.WriteLine(i);
-                            }
-                        }
-
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-                        
-                        blockNestedJoin(table2.table + "_" + table2.site + ".txt", returndFileName);
-                    }
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-
-                }
-                if (table1.table.Equals("depositor") && table2.table.Equals("account")) // working
-                {
-                    MessageBox.Show("Dep acc semi");
-                    MessageBox.Show("table 2 :"+table2.table+"  site 2:"+table2.site);
-                    MessageBox.Show("table 1 :" + table1.table + "  site 1:" + table1.site);
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
-                    txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
-                    List<string> tempsiteL1 = new List<string>();
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
-                    {
-                        foreach (Account i in accountTable)
-                        {
-                            file.WriteLine(i.getKey());
-                            lstSite1.Items.Add(i.getKey());
-                        }
-                    }
-
-                    try
-                    {
-                        HashSet<string> tempSite2 = new HashSet<string>();
-                        using (StreamReader sr = new StreamReader(shippingFileName))
-                        {
-                            string line;
-
-
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                foreach (Depositor i in depositorTable)
-                                {
-                                    if (line.Equals(i.getAccNo()))
-                                    {
-                                        tempSite2.Add(i.getAccNo() + "," + i.getCustName());
-                                        break;
-                                    }
-                                }
-                            }
-                            tempsiteL1 = tempSite2.ToList<string>();
-                            lstSite2.DataSource = tempsiteL1;
-
-                        }
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
-
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
-                        {
-                            foreach (string i in tempSite2)
-                            {
-                                file.WriteLine(i);
-                            }
-                        }
-
-                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                        txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
-                        blockNestedJoinAccount(table2.table + "_" + table2.site + ".txt", returndFileName);
-                    }
-                    catch (Exception eee)
-                    {
-                        MessageBox.Show("File not found customer  \n\n" + eee.ToString());
-                    }
-
-                }
-                if (table1.table.Equals("branch"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + " Ship " + table1.table + " key to site" + table2.site;
-                }
-                if (table1.table.Equals("account"))
-                {
-                    txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
-                    txtLog.Text = txtLog.Text + " Ship " + table1.table + " key to site" + table2.site;
-                }
+                MessageBox.Show("t1 : "+table1.table+"    t2 : "+table2.table);
+                twoWaySemijoin(table1, table2, cmbCurrServer.Text);
             }
             else
             {
-                MessageBox.Show("tbl 1 :"+table1.table+"   tbl 2 :"+table2.table);
-                twoWaySemijoin(table1,table2,cmbCurrServer.Text);
+
+                if (table1.site.Equals(cmbCurrServer.Text))
+                {
+
+                    shippingFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
+                    returndFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
+
+                    try
+                    {
+                        System.IO.File.Delete(shippingFileName);
+                        System.IO.File.Delete(returndFileName);
+                    }
+                    catch (System.IO.IOException eee)
+                    { }
+
+                    if (table1.table.Equals("customer") && table2.table.Equals("depositor"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                        List<string> tempsiteL1 = new List<string>();
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                        {
+                            foreach (Customer i in customerTable)
+                            {
+                                file.WriteLine(i.getCustName());
+                                lstSite1.Items.Add(i.getCustName());
+                            }
+                        }
+
+                        try
+                        {
+                            using (StreamReader sr = new StreamReader(shippingFileName))
+                            {
+                                string line;
+                                List<string> tempSite1 = new List<string>();
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    foreach (Depositor i in depositorTable)
+                                    {
+                                        if (line.Equals(i.getKey1()))
+                                        {
+                                            tempSite1.Add(line);
+                                            break;
+                                        }
+                                    }
+                                }
+                                tempsiteL1 = tempSite1.ToList<string>();
+                                lstSite2.DataSource = tempsiteL1;
+
+                            }
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
+
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                            {
+                                foreach (string i in tempsiteL1)
+                                {
+                                    file.WriteLine(i);
+                                }
+                            }
+
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+                            blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
+                        }
+                        catch (Exception eee)
+                        {
+                            MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                        }
+                    }
+                    if (table1.table.Equals("depositor") && table2.table.Equals("customer"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                        List<string> tempsiteL1 = new List<string>();
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                        {
+                            foreach (Depositor i in depositorTable)
+                            {
+                                file.WriteLine(i.getKey1());
+                                lstSite1.Items.Add(i.getKey1());
+                            }
+                        }
+
+                        try
+                        {
+                            HashSet<string> tempSite2 = new HashSet<string>();
+                            using (StreamReader sr = new StreamReader(shippingFileName))
+                            {
+                                string line;
+
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    foreach (Customer i in customerTable)
+                                    {
+                                        if (line.Equals(i.getCustName()))
+                                        {
+                                            tempSite2.Add(i.getCustName() + "," + i.getStreet() + "," + i.getCity());
+                                            break;
+                                        }
+                                    }
+                                }
+                                tempsiteL1 = tempSite2.ToList<string>();
+                                lstSite2.DataSource = tempsiteL1;
+
+                            }
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
+
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                            {
+                                foreach (string i in tempSite2)
+                                {
+                                    file.WriteLine(i);
+                                }
+                            }
+
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+                            blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
+                        }
+                        catch (Exception eee)
+                        {
+                            MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                        }
+
+                    }
+                    if (table1.table.Equals("depositor") && table2.table.Equals("account"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table1.table + "_key to site " + table2.site;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                        List<string> tempsiteL1 = new List<string>();
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                        {
+                            foreach (Depositor i in depositorTable)
+                            {
+                                file.WriteLine(i.getKey1());
+                                lstSite1.Items.Add(i.getKey1());
+                            }
+                        }
+
+                        try
+                        {
+                            HashSet<string> tempSite2 = new HashSet<string>();
+                            using (StreamReader sr = new StreamReader(shippingFileName))
+                            {
+                                string line;
+
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    foreach (Customer i in customerTable)
+                                    {
+                                        if (line.Equals(i.getCustName()))
+                                        {
+                                            tempSite2.Add(i.getCustName() + "," + i.getStreet() + "," + i.getCity());
+                                            break;
+                                        }
+                                    }
+                                }
+                                tempsiteL1 = tempSite2.ToList<string>();
+                                lstSite2.DataSource = tempsiteL1;
+
+                            }
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
+
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                            {
+                                foreach (string i in tempSite2)
+                                {
+                                    file.WriteLine(i);
+                                }
+                            }
+
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+                            blockNestedJoin(table1.table + "_" + table1.site + ".txt", returndFileName);
+                        }
+                        catch (Exception eee)
+                        {
+                            MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                        }
+
+                    }
+                    if (table2.table.Equals("branch"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
+                    }
+                    if (table2.table.Equals("account"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
+                        MessageBox.Show("accounttttttttttttttttttttt = " + table1.site);
+                    }
+                }
+
+                ////////////////////////////////////////////////////////////////
+
+                else if (table2.site.Equals(cmbCurrServer.Text))
+                {
+
+                    shippingFileName = table2.table + "_" + table2.site + "_" + table1.site + "_copy.txt";
+                    returndFileName = table1.table + "_" + table1.site + "_" + table2.site + "_copy.txt";
+                    try
+                    {
+                        System.IO.File.Delete(shippingFileName);
+                        System.IO.File.Delete(returndFileName);
+                    }
+                    catch (System.IO.IOException eee)
+                    {
+                        MessageBox.Show("File not found depositor  \n\n" + eee.ToString());
+                    }
+
+                    if (table2.table.Equals("customer") && table1.table.Equals("depositor"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                        List<string> tempsiteL1 = new List<string>();
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                        {
+                            foreach (Customer i in customerTable)
+                            {
+                                file.WriteLine(i.getCustName());
+                                lstSite1.Items.Add(i.getCustName());
+                            }
+                        }
+
+                        try
+                        {
+                            using (StreamReader sr = new StreamReader(shippingFileName))
+                            {
+                                string line;
+                                HashSet<string> tempSite1 = new HashSet<string>();
+
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    foreach (Depositor i in depositorTable)
+                                    {
+                                        if (line.Equals(i.getKey1()))
+                                        {
+                                            tempSite1.Add(line);
+                                            break;
+                                        }
+                                    }
+                                }
+                                tempsiteL1 = tempSite1.ToList<string>();
+                                lstSite2.DataSource = tempsiteL1;
+
+                            }
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved from site 2 : " + shippingFileName;
+
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                            {
+                                foreach (string i in tempsiteL1)
+                                {
+                                    file.WriteLine(i);
+                                }
+                            }
+
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+                            blockNestedJoin(table2.table + "_" + table2.site + ".txt", returndFileName);
+                        }
+
+                        catch (Exception eee)
+                        {
+                            MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                        }
+
+                    }
+                    if (table1.table.Equals("customer") && table2.table.Equals("depositor"))
+                    {
+                        //MessageBox.Show("starting depos site 2 ----------------------------");
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + " Ship " + table2.table + " key to site " + table1.site;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                        List<string> tempsiteL1 = new List<string>();
+
+
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                        {
+                            foreach (Depositor i in depositorTable)
+                            {
+                                file.WriteLine(i.getKey1());
+                                lstSite1.Items.Add(i.getKey1());
+                            }
+                        }
+
+                        try
+                        {
+                            HashSet<string> tempSite2 = new HashSet<string>();
+                            using (StreamReader sr = new StreamReader(shippingFileName))
+                            {
+                                string line;
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    foreach (Customer i in customerTable)
+                                    {
+                                        if (line.Equals(i.getCustName()))
+                                        {
+                                            tempSite2.Add(i.getCustName() + "," + i.getStreet() + "," + i.getCity());
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                tempsiteL1 = tempSite2.ToList<string>();
+                                lstSite2.DataSource = tempsiteL1;
+                            }
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
+
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                            {
+                                foreach (string i in tempSite2)
+                                {
+                                    file.WriteLine(i);
+                                }
+                            }
+
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+
+                            blockNestedJoin(table2.table + "_" + table2.site + ".txt", returndFileName);
+                        }
+                        catch (Exception eee)
+                        {
+                            MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                        }
+
+                    }
+                    if (table1.table.Equals("depositor") && table2.table.Equals("account")) // working
+                    {
+                        MessageBox.Show("Dep acc semi");
+                        MessageBox.Show("table 2 :" + table2.table + "  site 2:" + table2.site);
+                        MessageBox.Show("table 1 :" + table1.table + "  site 1:" + table1.site);
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + "Ship " + table2.table + "_key to site " + table1.site;
+                        txtLog.Text = txtLog.Text + Environment.NewLine + "temp table = " + shippingFileName;
+                        List<string> tempsiteL1 = new List<string>();
+                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(shippingFileName, true))
+                        {
+                            foreach (Account i in accountTable)
+                            {
+                                file.WriteLine(i.getKey());
+                                lstSite1.Items.Add(i.getKey());
+                            }
+                        }
+
+                        try
+                        {
+                            HashSet<string> tempSite2 = new HashSet<string>();
+                            using (StreamReader sr = new StreamReader(shippingFileName))
+                            {
+                                string line;
+
+
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    foreach (Depositor i in depositorTable)
+                                    {
+                                        if (line.Equals(i.getAccNo()))
+                                        {
+                                            tempSite2.Add(i.getAccNo() + "," + i.getCustName());
+                                            break;
+                                        }
+                                    }
+                                }
+                                tempsiteL1 = tempSite2.ToList<string>();
+                                lstSite2.DataSource = tempsiteL1;
+
+                            }
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "shiped to site 2 : " + shippingFileName;
+
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(returndFileName, true))
+                            {
+                                foreach (string i in tempSite2)
+                                {
+                                    file.WriteLine(i);
+                                }
+                            }
+
+                            txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                            txtLog.Text = txtLog.Text + "recieved back to site 1 : " + returndFileName;
+
+
+                            blockNestedJoinAccount(table2.table + "_" + table2.site + ".txt", returndFileName);
+                        }
+                        catch (Exception eee)
+                        {
+                            MessageBox.Show("File not found customer  \n\n" + eee.ToString());
+                        }
+
+                    }
+                    if (table1.table.Equals("branch"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + " Ship " + table1.table + " key to site" + table2.site;
+                    }
+                    if (table1.table.Equals("account"))
+                    {
+                        txtLog.Text = txtLog.Text + Environment.NewLine + Environment.NewLine;
+                        txtLog.Text = txtLog.Text + " Ship " + table1.table + " key to site" + table2.site;
+                    }
+                }
+                else
+                {
+                    twoWaySemijoin(table1, table2, cmbCurrServer.Text);
+                }
             }
         }
 
@@ -1320,23 +1950,59 @@ namespace Project1
             Regex rgx = new Regex("AND");
             string result = rgx.Replace(condition, "~");                
             condList = result.Split('~');
-
+            
             foreach (string i in condList)
             {
+                string[] ss = i.Split(' ');
+                if (ss[1].Contains("account.balance")) {                     
+                    double j;
+                    query4 = true;
+                    if (Double.TryParse(ss[3].ToString(), out j)) {
+                        balanceCondition = j;                       
+                    }
+                    else {
+                        MessageBox.Show("Enterd balance condition is not valid");
+                    }                            
+                }
                 txtLog.Text = txtLog.Text + Environment.NewLine + i +Environment.NewLine;
                 list.Add(i);
             }
-
+            MessageBox.Show("Baaaaaaaaaaaaaaaaaaalance   == " +balanceCondition);
             return list;
         }
-        
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                clearSites();
-                gridOut.DataSource = null;
+                int j=2;
+                if (Int32.TryParse(txtMemorySize.Text.ToString(), out j))/********************************* todo *************************/
+                {                     
+                    if (j > 3)
+                    {
+                        mainMemorySize = j;
+                        MessageBox.Show(j + "");
+                    }
+                    else {
+                        MessageBox.Show("Memory size should be Possitive Integer grater than 3");
+                        mainMemorySize = 5;
+                        txtMemorySize.Text = 5 + "";
+                    }
+                    
+                }
+                else {
+                    MessageBox.Show("Memory size should be Possitive Integer value");
+                    mainMemorySize = 5;
+                    txtMemorySize.Text = 5 + "";
+                }
 
+
+                clearSites();
+                clearGrid();
+                
+                gridOut.DataSource = null;
+                query4 = false;
                 string[] fromList = txtxFrom.Text.ToString().Split(',');
                 bool fileFlag = true;
                 foreach (string i in fromList) {
@@ -1386,26 +2052,36 @@ namespace Project1
             {
                 lstSite2.DataSource = null;
             }
-            
+            try
+            {
+                lstInner.Items.Clear();
+            }
+            catch (Exception ee1)
+            {
+                lstInner.DataSource = null;
+            }
+            try
+            {
+                lstOuter.Items.Clear();
+            }
+            catch (Exception ee2)
+            {
+                lstOuter.DataSource = null;
+            }
+            tableSet.Clear();            
+            lstOutBuffer.Items.Clear();
+        }
+
+        public void clearGrid() {
+            tableSet.Clear();
+            gridOut.DataSource = null;
+            lstOutBuffer.Items.Clear();
         }
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            try { 
-                lstInner.Items.Clear();               
-            }
-            catch (Exception ee1) {
-                lstInner.DataSource = null;                
-            }
-            try {
-                lstOuter.Items.Clear();
-            }
-            catch (Exception ee2) {
-                lstOuter.DataSource = null;
-            }            
-            tableSet.Clear();
-            gridOut.DataSource = null;
-            lstOutBuffer.Items.Clear();
+            clearSites();
+            clearGrid();
         }
 
         private void btnClearLog_Click(object sender, EventArgs e)
@@ -1450,6 +2126,14 @@ namespace Project1
             txtSelect.Text = "cust_name,street,city";
             txtxFrom.Text = "depositor,account,customer";
             txtWhere.Text = "depositor.acc_number = account.acc_number AND depositor.cust_name = customer.cust_name AND account.acc_number = 'A85486371'";
+        }
+
+        private void rdo4_CheckedChanged(object sender, EventArgs e)
+        {
+            cmbCurrServer.SelectedIndex = 2;
+            txtSelect.Text = "cust_name,street,city";
+            txtxFrom.Text = "depositor,account,customer";
+            txtWhere.Text = "depositor.cust_name = customer.cust_name AND depositor.acc_number = account.acc_number AND account.balance > 500";
         }
     }
 }

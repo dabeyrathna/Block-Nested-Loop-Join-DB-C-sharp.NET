@@ -59,6 +59,8 @@
             this.btnExit = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lstOutBuffer = new System.Windows.Forms.ListBox();
+            this.txtMemorySize = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridOut)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -309,6 +311,7 @@
             this.rdo4.TabStop = true;
             this.rdo4.Text = "Query 4";
             this.rdo4.UseVisualStyleBackColor = true;
+            this.rdo4.CheckedChanged += new System.EventHandler(this.rdo4_CheckedChanged);
             // 
             // rdo3
             // 
@@ -384,11 +387,29 @@
             this.lstOutBuffer.Size = new System.Drawing.Size(360, 108);
             this.lstOutBuffer.TabIndex = 0;
             // 
+            // txtMemorySize
+            // 
+            this.txtMemorySize.Location = new System.Drawing.Point(601, 369);
+            this.txtMemorySize.Name = "txtMemorySize";
+            this.txtMemorySize.Size = new System.Drawing.Size(43, 20);
+            this.txtMemorySize.TabIndex = 20;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(528, 373);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 13);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Memory Size";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 722);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtMemorySize);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnClearLog);
@@ -451,6 +472,8 @@
         private System.Windows.Forms.RadioButton rdo3;
         private System.Windows.Forms.RadioButton rdo2;
         private System.Windows.Forms.RadioButton rdo1;
+        private System.Windows.Forms.TextBox txtMemorySize;
+        private System.Windows.Forms.Label label1;
     }
 }
 
